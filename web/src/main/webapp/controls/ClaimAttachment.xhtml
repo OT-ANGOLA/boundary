@@ -100,7 +100,7 @@
                                 <button type="button" class="btn btn-default" data-dismiss="modal">#{msg.GENERAL_LABEL_CLOSE}</button>
                                 <h:commandButton class="btn btn-primary" value="#{msg.GENERAL_LABEL_SAVE}" onclick="return checkAttachmentForm()">
                                     <f:ajax event="click" execute=":attachForm:pnlAttachment" 
-                                            render=":mainForm:pnlAttachments"
+                                            render=":mainForm:pnlAttachments :mainForm:claimToolbar"
                                             onevent="onSaveAttachment"
                                             onerror="handleAjaxError"
                                             listener="#{claimAttachmentBean.saveAttachment(instantSave)}" />

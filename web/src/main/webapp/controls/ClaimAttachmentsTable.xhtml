@@ -6,6 +6,50 @@
       xmlns:f="http://java.sun.com/jsf/core">
     <body>
         <ui:composition>
+            <ui:fragment rendered="#{allowEdit and !claimPageBean.isTransfer and !claimPageBean.isRestriction}">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h:selectBooleanCheckbox id="chbxExtLicense" value="#{claimPageBean.licenseForExtension}" />
+                        #{msg.CLAIM_PAGE_EXTENSION_LICENSE}
+                    </div>
+                    <div class="col-md-3">
+                        <h:selectBooleanCheckbox id="chbxConstrLicense" value="#{claimPageBean.licenseForConstruction}" />
+                        #{msg.CLAIM_PAGE_CONSTRUCTION_LICENSE}
+                    </div>
+                    <div class="col-md-3">
+                        <h:selectBooleanCheckbox id="chbxLeaseDoc" value="#{claimPageBean.leaseDocument}" />
+                        #{msg.CLAIM_PAGE_LEASE_DOCUMENT}
+                    </div>
+                    <div class="col-md-3">
+                        <h:selectBooleanCheckbox id="chbxConstrProvinceLicense" value="#{claimPageBean.licenseForConstructionProvince}" />
+                        #{msg.CLAIM_PAGE_CONSTRUCTION_LICENSE_BY_PROVINCE}
+                    </div>
+                </div>
+
+                <div class="splitter"></div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <h:selectBooleanCheckbox id="chbxDemolishLicense" value="#{claimPageBean.licenseForDemolish}" />
+                        #{msg.CLAIM_PAGE_DEMOLISHING_LICENSE}
+                    </div>
+                    <div class="col-md-3">
+                        <h:selectBooleanCheckbox id="chbxRehabilitationLicense" value="#{claimPageBean.licenseForRefurbish}" /> 
+                        #{msg.CLAIM_PAGE_REHABILITATION_LICENSE}
+                    </div>
+                    <div class="col-md-3">
+                        <h:selectBooleanCheckbox id="chbxFenceLicense" value="#{claimPageBean.licenseForFence}" />
+                        #{msg.CLAIM_PAGE_FENCE_LICENSE}
+                    </div>
+                    <div class="col-md-3">
+                        <h:selectBooleanCheckbox id="chbxSellLicense" value="#{claimPageBean.licenseForSell}" />
+                        #{msg.CLAIM_PAGE_SELL_LICENSE}
+                    </div>
+                </div>
+
+                <div class="splitter"></div>
+            </ui:fragment>
+
             <h:commandLink class="BlueLink" rendered="#{allowEdit or claimPageBean.canAddDocuments}">
                 <f:ajax event="click" 
                         render= ":attachForm:pnlAttachment"
@@ -36,7 +80,7 @@
                                        onclick="return confirm('#{msg.CLAIM_PAGE_CONFIRM_DELETE_ATTACHMENT}')">
                             <f:ajax listener="#{claimPageBean.deleteAttachment(a.id)}" 
                                     event="click" onevent="onDeleteAttachment" onerror="handleAjaxError"
-                                    render=":mainForm:pnlAttachments" /><i class="glyphicon glyphicon-remove"></i>
+                                    render=":mainForm:pnlAttachments :mainForm:claimToolbar" /><i class="glyphicon glyphicon-remove"></i>
                         </h:commandLink>
                         <a href="#{request.contextPath}/claim/getAttachment?id=#{a.id}">
                             #{claimPageBean.getDocTypeName(a.typeCode)}

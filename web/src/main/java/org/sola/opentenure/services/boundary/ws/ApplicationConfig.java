@@ -40,7 +40,8 @@ public class ApplicationConfig extends Application {
         resources.add(org.sola.opentenure.services.boundary.ws.ClaimResource.class);
         resources.add(org.sola.opentenure.services.boundary.ws.DynamicFormsResource.class);
         resources.add(org.sola.opentenure.services.boundary.ws.LoginResource.class);
-        resources.add(org.sola.opentenure.services.boundary.ws.ReferenceDataResource.class);
+        resources.add(org.sola.opentenure.services.boundary.ws.RESTCorsFilter.class);
+        resources.add(org.sola.opentenure.services.boundary.ws.RESTCorsOptionFilter.class);
         resources.add(org.sola.opentenure.services.boundary.ws.ReferenceDataResourceLocalized.class);
         resources.add(org.sola.opentenure.services.boundary.ws.ReferenceDataResourceUnlocalized.class);
     }

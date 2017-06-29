@@ -21,7 +21,7 @@ import org.sola.services.common.logging.LogUtility;
  */
 @Named
 @ViewScoped
-public class ClaimCetificatePrintBean extends AbstractBackingBean {
+public class WorkflowDocumentPrintBean extends AbstractBackingBean {
 
     @EJB
     SystemCSEJBLocal systemEjb;
@@ -29,21 +29,27 @@ public class ClaimCetificatePrintBean extends AbstractBackingBean {
     @Inject
     ReportServerBean server;
 
-    public void printCertificate() {
+    public void print() {
         try {
+            String reportName = getRequestParam("reportName");
             String id = getRequestParam("id");
-            if(StringUtility.isEmpty(id)){
+            if(StringUtility.isEmpty(reportName)){
                 return;
             }
             
-            ResourceDescription report = server.getReport(systemEjb.getSetting(ConfigConstants.CLAIM_CERTIFICATE_URL, ""));
-            List<ReportParam> params = server.getReportParameters(report.getUri());
             String communityName = systemEjb.getSetting(ConfigConstants.COMMUNITY_NAME, "Test community");
+            String reportsPath = systemEjb.getSetting(ConfigConstants.WORKFLOW_REPORTS_URL, "");
+            if(!reportsPath.endsWith("/")){
+                reportsPath = reportsPath + "/";
+            }
+            
+            ResourceDescription report = server.getReport(reportsPath + reportName);
+            List<ReportParam> params = server.getReportParameters(report.getUri());
             
             if (params != null) {
                 for (ReportParam param : params) {
                     if (param.getId().equalsIgnoreCase("id")) {
-                        param.setValueString(id);
+                        param.setValueString(StringUtility.empty(id));
                     }
                     if (param.getId().equalsIgnoreCase("communityName")) {
                         param.setValueString(URLEncoder.encode(communityName, "UTF-8"));
@@ -59,43 +65,8 @@ public class ClaimCetificatePrintBean extends AbstractBackingBean {
                 server.runReport(report.getUri(), params.toArray(new ReportParam[params.size()]), "pdf");
             }
         } catch (Exception e) {
-            getContext().addMessage(null, new FacesMessage("Failed to run claim certificate printing"));
-            LogUtility.log("Failed to run claim certificate printing", e);
-        }
-    }
-    
-    public void printForm23() {
-        try {
-            String id = getRequestParam("id");
-            if(StringUtility.isEmpty(id)){
-                return;
-            }
-            
-            ResourceDescription report = server.getReport(systemEjb.getSetting(ConfigConstants.FORM23_URL, ""));
-            List<ReportParam> params = server.getReportParameters(report.getUri());
-            String communityName = systemEjb.getSetting(ConfigConstants.COMMUNITY_NAME, "Test community");
-            
-            if (params != null) {
-                for (ReportParam param : params) {
-                    if (param.getId().equalsIgnoreCase("id")) {
-                        param.setValueString(id);
-                    }
-                    if (param.getId().equalsIgnoreCase("communityName")) {
-                        param.setValueString(URLEncoder.encode(communityName, "UTF-8"));
-                    }
-                    if (param.getId().equalsIgnoreCase("imageUrl")) {
-                        String appUrl = getApplicationUrl();
-                        // JasperServer has issues with HTTPS protocol when generating output in PDF format. 
-                        // So, try to replace https to http for workaround
-                        appUrl = appUrl.replace("https:", "http:").replace(":8181", ":8080").replace(":443", "");
-                        param.setValueString(URLEncoder.encode(appUrl + "/claim/GetMapImage.xhtml", "UTF-8"));
-                    }
-                }
-                server.runReport(report.getUri(), params.toArray(new ReportParam[params.size()]), "pdf");
-            }
-        } catch (Exception e) {
-            getContext().addMessage(null, new FacesMessage("Failed to run form23 printing"));
-            LogUtility.log("Failed to run form23 printing", e);
+            getContext().addMessage(null, new FacesMessage("Failed to run report printing"));
+            LogUtility.log("Failed to run report", e);
         }
     }
 }

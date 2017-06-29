@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <body>
+        <ui:composition>
+            <script src="#{request.contextPath}/js/ot_location.js"></script>
+            <script type="text/javascript">
+                var baseWsRefUrl = '#{languageBean.applicationUrl}/ws/#{languageBean.locale}/ref/';
+            </script>
+
+            <div style="display: none;" class="modal fade" id="locationDialog" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:300px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">#{msg.GENERAL_LABEL_CLOSE}</span>
+                            </button>
+                            <h4 class="modal-title">Location</h4>
+                        </div>
+                        <div id="locationBody" class="modal-body">
+                            <label>#{msg.CLAIM_PAGE_COUNTRY}</label>
+                            <br />
+                            <select id="cbxCountries" class="form-control"></select>
+
+                            <div class="splitter"></div>
+
+                            <label>#{msg.CLAIM_PAGE_PROVINCE}</label>
+                            <br />
+                            <select id="cbxProvinces" class="form-control"></select>
+
+                            <div class="splitter"></div>
+
+                            <label>#{msg.CLAIM_PAGE_MUNICIPALITY}</label>
+                            <br />
+                            <select id="cbxMunicipalities" class="form-control"></select>
+
+                            <div class="splitter"></div>
+
+                            <label>#{msg.CLAIM_PAGE_COMMUNE}</label>
+                            <br />
+                            <select id="cbxCommunes" class="form-control"></select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="return saveLocation();">
+                                #{msg.GENERAL_LABEL_SELECT}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:composition>
+    </body>
+</html>

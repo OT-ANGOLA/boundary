@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -20,10 +19,17 @@ import org.sola.cs.services.ejb.cache.businesslogic.CacheCSEJBLocal;
 import org.sola.cs.services.ejb.search.businesslogic.SearchCSEJBLocal;
 import org.sola.cs.services.ejb.system.businesslogic.SystemCSEJBLocal;
 import org.sola.cs.services.ejb.refdata.businesslogic.RefDataCSEJBLocal;
+import org.sola.cs.services.ejb.refdata.entities.AdjacencyType;
+import org.sola.cs.services.ejb.refdata.entities.Commune;
+import org.sola.cs.services.ejb.refdata.entities.Country;
 import org.sola.cs.services.ejb.refdata.entities.FieldType;
 import org.sola.cs.services.ejb.refdata.entities.GenderType;
 import org.sola.cs.services.ejb.refdata.entities.IdType;
+import org.sola.cs.services.ejb.refdata.entities.LandProject;
 import org.sola.cs.services.ejb.refdata.entities.Language;
+import org.sola.cs.services.ejb.refdata.entities.MaritalStatus;
+import org.sola.cs.services.ejb.refdata.entities.Municipality;
+import org.sola.cs.services.ejb.refdata.entities.Province;
 import org.sola.cs.services.ejb.refdata.entities.RejectionReason;
 import org.sola.cs.services.ejb.refdata.entities.RrrType;
 import org.sola.cs.services.ejb.refdata.entities.SourceType;
@@ -37,29 +43,29 @@ import org.sola.cs.services.ejbs.claim.entities.TerminationReason;
 @Named
 @ApplicationScoped
 public class ReferenceData {
-    
+
     @EJB
     SearchCSEJBLocal searchEjb;
 
     @EJB
     SystemCSEJBLocal systemEjb;
-    
+
     @EJB
     RefDataCSEJBLocal refDataEjb;
-    
+
     @EJB
     ClaimEJBLocal claimEjb;
-    
+
     @EJB
     CacheCSEJBLocal cacheEjb;
 
     private final String MAP_EXTENT = "MAP_EXTENT";
     private final String COMMUNITY_AREA = "COMMUNITY_AREA";
-    
+
     public ReferenceData() {
         super();
     }
-        
+
     /**
      * Returns list of {@link Language}
      *
@@ -69,7 +75,7 @@ public class ReferenceData {
     public List<Language> getLanguages(String langCode) {
         return refDataEjb.getLanguages(langCode);
     }
-    
+
     /**
      * Returns list of {@link FieldType}
      *
@@ -78,7 +84,7 @@ public class ReferenceData {
      * @return
      */
     public List<FieldType> getFieldTypes(String langCode, boolean onlyActive) {
-        return getTypes(refDataEjb.getCodeEntityList(FieldType.class, langCode),onlyActive);
+        return getTypes(refDataEjb.getCodeEntityList(FieldType.class, langCode), onlyActive);
     }
 
     /**
@@ -97,7 +103,72 @@ public class ReferenceData {
         }
         return result.toArray(new FieldType[result.size()]);
     }
-    
+
+    public String getCountryName(String countryCode, String langCode) {
+        Country country = refDataEjb.getCodeEntity(Country.class, countryCode, langCode);
+        if (country != null) {
+            return country.getDisplayValue();
+        }
+        return "";
+    }
+
+    public String getLocationStringByCommune(String communeCode, String langCode) {
+        if (StringUtility.isEmpty(communeCode)) {
+            return "";
+        }
+
+        String loc = "";
+
+        Commune commune = refDataEjb.getCodeEntity(Commune.class, communeCode, langCode);
+        if (commune == null) {
+            return loc;
+        }
+
+        loc = commune.getDisplayValue();
+        Municipality municipality = refDataEjb.getCodeEntity(Municipality.class, commune.getMunicipalityCode(), langCode);
+
+        if (municipality != null) {
+            loc = municipality.getDisplayValue() + ", " + loc;
+            Province province = refDataEjb.getCodeEntity(Province.class, municipality.getProvinceCode(), langCode);
+            if (province != null) {
+                loc = province.getDisplayValue() + ", " + loc;
+            }
+        }
+        return loc;
+    }
+
+    public String getLocationStringByMunicipality(String municipalityCode, String langCode) {
+        if (StringUtility.isEmpty(municipalityCode)) {
+            return "";
+        }
+
+        String loc = "";
+        Municipality municipality = refDataEjb.getCodeEntity(Municipality.class, municipalityCode, langCode);
+
+        if (municipality != null) {
+            loc = municipality.getDisplayValue();
+            Province province = refDataEjb.getCodeEntity(Province.class, municipality.getProvinceCode(), langCode);
+            if (province != null) {
+                loc = province.getDisplayValue() + ", " + loc;
+            }
+        }
+        return loc;
+    }
+
+    public String getLocationStringByProvince(String provinceCode, String langCode) {
+        if (StringUtility.isEmpty(provinceCode)) {
+            return "";
+        }
+
+        String loc = "";
+        Province province = refDataEjb.getCodeEntity(Province.class, provinceCode, langCode);
+        
+        if (province != null) {
+            loc = province.getDisplayValue();
+        }
+        return loc;
+    }
+
     /**
      * Returns list of {@link FieldConstraintType}
      *
@@ -125,7 +196,7 @@ public class ReferenceData {
         }
         return result.toArray(new FieldConstraintType[result.size()]);
     }
-    
+
     /**
      * Returns list of {@link LandUseType}
      *
@@ -152,6 +223,429 @@ public class ReferenceData {
             result.add(0, createDummy(new LandUseType()));
         }
         return result.toArray(new LandUseType[result.size()]);
+    }
+
+    /**
+     * Returns list of {@link AdjacencyType}
+     *
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<AdjacencyType> getAdjacencyTypes(String langCode, boolean onlyActive) {
+        return getTypes(refDataEjb.getCodeEntityList(AdjacencyType.class, langCode), onlyActive);
+    }
+
+    /**
+     * Returns array of {@link AdjacencyType}
+     *
+     * @param addDummy Indicates whether to create dummy record or not
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public AdjacencyType[] getAdjacencyTypes(boolean addDummy, String langCode, boolean onlyActive) {
+        ArrayList<AdjacencyType> result = (ArrayList<AdjacencyType>) getAdjacencyTypes(langCode, onlyActive);
+        if (addDummy) {
+            result = (ArrayList<AdjacencyType>) result.clone();
+            result.add(0, createDummy(new AdjacencyType()));
+        }
+        return result.toArray(new AdjacencyType[result.size()]);
+    }
+
+    /**
+     * Returns list of {@link MaritalStatus}
+     *
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<MaritalStatus> getMaritalStatuses(String langCode, boolean onlyActive) {
+        return getTypes(refDataEjb.getCodeEntityList(MaritalStatus.class, langCode), onlyActive);
+    }
+
+    /**
+     * Returns array of {@link MaritalStatus}
+     *
+     * @param addDummy Indicates whether to create dummy record or not
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public MaritalStatus[] getMaritalStatuses(boolean addDummy, String langCode, boolean onlyActive) {
+        ArrayList<MaritalStatus> result = (ArrayList<MaritalStatus>) getMaritalStatuses(langCode, onlyActive);
+        if (addDummy) {
+            result = (ArrayList<MaritalStatus>) result.clone();
+            result.add(0, createDummy(new MaritalStatus()));
+        }
+        return result.toArray(new MaritalStatus[result.size()]);
+    }
+
+    /**
+     * Returns list of {@link LandProject}
+     *
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<LandProject> getLandProjects(String langCode, boolean onlyActive) {
+        return getTypes(refDataEjb.getCodeEntityList(LandProject.class, langCode), onlyActive);
+    }
+
+    /**
+     * Returns array of {@link LandProject}
+     *
+     * @param addDummy Indicates whether to create dummy record or not
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public LandProject[] getLandProjects(boolean addDummy, String langCode, boolean onlyActive) {
+        ArrayList<LandProject> result = (ArrayList<LandProject>) getLandProjects(langCode, onlyActive);
+        if (addDummy) {
+            result = (ArrayList<LandProject>) result.clone();
+            result.add(0, createDummy(new LandProject()));
+        }
+        return result.toArray(new LandProject[result.size()]);
+    }
+
+    /**
+     * Returns list of {@link Country}
+     *
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Country> getCountries(String langCode, boolean onlyActive) {
+        return getTypes(refDataEjb.getCodeEntityList(Country.class, langCode), onlyActive);
+    }
+
+    /**
+     * Returns array of {@link Country}
+     *
+     * @param addDummy Indicates whether to create dummy record or not
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public Country[] getCountries(boolean addDummy, String langCode, boolean onlyActive) {
+        ArrayList<Country> result = (ArrayList<Country>) getCountries(langCode, onlyActive);
+        if (addDummy) {
+            result = (ArrayList<Country>) result.clone();
+            result.add(0, createDummy(new Country()));
+        }
+        return result.toArray(new Country[result.size()]);
+    }
+
+    /**
+     * Returns list of {@link Province}
+     *
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Province> getProvinces(String langCode, boolean onlyActive) {
+        return getTypes(refDataEjb.getCodeEntityList(Province.class, langCode), onlyActive);
+    }
+
+    /**
+     * Returns list of {@link Province}
+     *
+     * @param countryCode Country code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Province> getProvinces(String countryCode, String langCode, boolean onlyActive) {
+        ArrayList<Province> result = new ArrayList<>();
+        ArrayList<Province> provinces = (ArrayList<Province>) getProvinces(langCode, onlyActive);
+        if (provinces != null && provinces.size() > 0) {
+            for (Province province : provinces) {
+                if (StringUtility.empty(countryCode).equalsIgnoreCase(province.getCountryCode())) {
+                    result.add(province);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns array of {@link Country}
+     *
+     * @param countryCode Country code
+     * @param addDummy Indicates whether to create dummy record or not
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public Province[] getProvinces(String countryCode, boolean addDummy, String langCode, boolean onlyActive) {
+        ArrayList<Province> result = (ArrayList<Province>) getProvinces(countryCode, langCode, onlyActive);
+        if (addDummy) {
+            result = (ArrayList<Province>) result.clone();
+            result.add(0, createDummy(new Province()));
+        }
+        return result.toArray(new Province[result.size()]);
+    }
+
+    /**
+     * Returns array of {@link Country}
+     *
+     * @param addDummy Indicates whether to create dummy record or not
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public Province[] getProvinces(boolean addDummy, String langCode, boolean onlyActive) {
+        ArrayList<Province> result = (ArrayList<Province>) getProvinces(langCode, onlyActive);
+        if (addDummy) {
+            result = (ArrayList<Province>) result.clone();
+            result.add(0, createDummy(new Province()));
+        }
+        return result.toArray(new Province[result.size()]);
+    }
+
+    /**
+     * Returns list of {@link Province}
+     *
+     * @param provinceCode Province code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Province> getProvincesByProvinceCode(String provinceCode, String langCode, boolean onlyActive) {
+        ArrayList<Province> result = new ArrayList<>();
+        Province sourceProvince = refDataEjb.getCodeEntity(Province.class, provinceCode, langCode);
+        if (sourceProvince != null) {
+            ArrayList<Province> provinces = (ArrayList<Province>) getProvinces(langCode, onlyActive);
+            if (provinces != null && provinces.size() > 0) {
+                for (Province province : provinces) {
+                    if (sourceProvince.getCountryCode().equals(province.getCountryCode())) {
+                        result.add(province);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of {@link Country}
+     *
+     * @param provinceCode Province code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Country> getCountriesByProvinceCode(String provinceCode, String langCode, boolean onlyActive) {
+        ArrayList<Country> result = new ArrayList<>();
+        Province sourceProvince = refDataEjb.getCodeEntity(Province.class, provinceCode, langCode);
+        if (sourceProvince != null) {
+            ArrayList<Country> countries = (ArrayList<Country>) getCountries(langCode, onlyActive);
+            if (countries != null && countries.size() > 0) {
+                for (Country country : countries) {
+                    if (sourceProvince.getCountryCode().equals(country.getCode())) {
+                        result.add(country);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of {@link Municipality}
+     *
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Municipality> getMunicipalities(String langCode, boolean onlyActive) {
+        return getTypes(refDataEjb.getCodeEntityList(Municipality.class, langCode), onlyActive);
+    }
+
+    /**
+     * Returns list of {@link Municipality}
+     *
+     * @param provinceCode Country code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Municipality> getMunicipalities(String provinceCode, String langCode, boolean onlyActive) {
+        ArrayList<Municipality> result = new ArrayList<>();
+        ArrayList<Municipality> municipalities = (ArrayList<Municipality>) getMunicipalities(langCode, onlyActive);
+        if (municipalities != null && municipalities.size() > 0) {
+            for (Municipality municipality : municipalities) {
+                if (StringUtility.empty(provinceCode).equalsIgnoreCase(municipality.getProvinceCode())) {
+                    result.add(municipality);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns array of {@link Municipality}
+     *
+     * @param provinceCode Country code
+     * @param addDummy Indicates whether to create dummy record or not
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public Municipality[] getMunicipalities(String provinceCode, boolean addDummy, String langCode, boolean onlyActive) {
+        ArrayList<Municipality> result = (ArrayList<Municipality>) getMunicipalities(provinceCode, langCode, onlyActive);
+        if (addDummy) {
+            result = (ArrayList<Municipality>) result.clone();
+            result.add(0, createDummy(new Municipality()));
+        }
+        return result.toArray(new Municipality[result.size()]);
+    }
+
+    /**
+     * Returns list of {@link Municipality}
+     *
+     * @param municipalityCode Municipality code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Municipality> getMunicipalitiesByMunicipalityCode(String municipalityCode, String langCode, boolean onlyActive) {
+        ArrayList<Municipality> result = new ArrayList<>();
+        Municipality sourceMunicipality = refDataEjb.getCodeEntity(Municipality.class, municipalityCode, langCode);
+        if (sourceMunicipality != null) {
+            ArrayList<Municipality> municipalities = (ArrayList<Municipality>) getMunicipalities(langCode, onlyActive);
+            if (municipalities != null && municipalities.size() > 0) {
+                for (Municipality municipality : municipalities) {
+                    if (sourceMunicipality.getProvinceCode().equals(municipality.getProvinceCode())) {
+                        result.add(municipality);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of {@link Province}
+     *
+     * @param municipalityCode Municipality code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Province> getProvincesByMunicipalityCode(String municipalityCode, String langCode, boolean onlyActive) {
+        ArrayList<Province> result = new ArrayList<>();
+        Municipality sourceMunicipality = refDataEjb.getCodeEntity(Municipality.class, municipalityCode, langCode);
+        if (sourceMunicipality != null) {
+            ArrayList<Province> provinces = (ArrayList<Province>) getProvinces(langCode, onlyActive);
+            if (provinces != null && provinces.size() > 0) {
+                for (Province province : provinces) {
+                    if (sourceMunicipality.getProvinceCode().equals(province.getCode())) {
+                        result.add(province);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of {@link Municipality}
+     *
+     * @param communeCode Commune code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Municipality> getMunicipalitiesByCommuneCode(String communeCode, String langCode, boolean onlyActive) {
+        ArrayList<Municipality> result = new ArrayList<>();
+        Commune sourceCommune = refDataEjb.getCodeEntity(Commune.class, communeCode, langCode);
+        if (sourceCommune != null) {
+            ArrayList<Municipality> municipalities = (ArrayList<Municipality>) getMunicipalities(langCode, onlyActive);
+            if (municipalities != null && municipalities.size() > 0) {
+                for (Municipality municipality : municipalities) {
+                    if (sourceCommune.getMunicipalityCode().equals(municipality.getCode())) {
+                        result.add(municipality);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of {@link Commune}
+     *
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Commune> getCommunes(String langCode, boolean onlyActive) {
+        return getTypes(refDataEjb.getCodeEntityList(Commune.class, langCode), onlyActive);
+    }
+
+    /**
+     * Returns list of {@link Commune}
+     *
+     * @param communeCode Commune code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Commune> getCommunesByCommuneCode(String communeCode, String langCode, boolean onlyActive) {
+        ArrayList<Commune> result = new ArrayList<>();
+        Commune sourceCommune = refDataEjb.getCodeEntity(Commune.class, communeCode, langCode);
+        if (sourceCommune != null) {
+            ArrayList<Commune> communes = (ArrayList<Commune>) getCommunes(langCode, onlyActive);
+            if (communes != null && communes.size() > 0) {
+                for (Commune commune : communes) {
+                    if (sourceCommune.getMunicipalityCode().equals(commune.getMunicipalityCode())) {
+                        result.add(commune);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of {@link Commune}
+     *
+     * @param municipalityCode Country code
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public List<Commune> getCommunes(String municipalityCode, String langCode, boolean onlyActive) {
+        ArrayList<Commune> result = new ArrayList<>();
+        ArrayList<Commune> communes = (ArrayList<Commune>) getCommunes(langCode, onlyActive);
+        if (communes != null && communes.size() > 0) {
+            for (Commune commune : communes) {
+                if (StringUtility.empty(municipalityCode).equalsIgnoreCase(commune.getMunicipalityCode())) {
+                    result.add(commune);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns array of {@link Commune}
+     *
+     * @param municipalityCode Country code
+     * @param addDummy Indicates whether to create dummy record or not
+     * @param langCode Language code
+     * @param onlyActive Indicates whether to return only active records or all.
+     * @return
+     */
+    public Commune[] getCommunes(String municipalityCode, boolean addDummy, String langCode, boolean onlyActive) {
+        ArrayList<Commune> result = (ArrayList<Commune>) getCommunes(municipalityCode, langCode, onlyActive);
+        if (addDummy) {
+            result = (ArrayList<Commune>) result.clone();
+            result.add(0, createDummy(new Commune()));
+        }
+        return result.toArray(new Commune[result.size()]);
     }
 
     /**
@@ -219,7 +713,7 @@ public class ReferenceData {
     public List<ClaimStatus> getClaimStatuses(String langCode) {
         return refDataEjb.getCodeEntityList(ClaimStatus.class, langCode);
     }
-    
+
     /**
      * Returns list of {@link TerminationReason}
      *
@@ -239,16 +733,6 @@ public class ReferenceData {
      */
     public List<SourceType> getDocumentTypes(String langCode, boolean onlyActive) {
         return getTypes(refDataEjb.getCodeEntityList(SourceType.class, langCode), onlyActive);
-    }
-    
-    /**
-     * Returns list of {@link SourceType} for CCO issuance
-     *
-     * @param langCode Language code
-     * @return
-     */
-    public List<SourceType> getDocumentTypesForCcoIssuance(String langCode) {
-        return claimEjb.getDocumentTypesForIssuance(langCode);
     }
 
     /**
@@ -348,21 +832,6 @@ public class ReferenceData {
         }
         return result.toArray(new SourceType[result.size()]);
     }
-    
-    /**
-     * Returns list of {@link SourceType} for certificate issuance
-     *
-     * @param addDummy If true, empty item will be inserted on the top
-     * @return
-     */
-    public SourceType[] getDocumentTypesForCcoIssuance(boolean addDummy, String langCode) {
-        ArrayList<SourceType> result = (ArrayList<SourceType>) getDocumentTypesForCcoIssuance(langCode);
-        if (addDummy) {
-            result = (ArrayList<SourceType>) result.clone();
-            result.add(0, createDummy(new SourceType()));
-        }
-        return result.toArray(new SourceType[result.size()]);
-    }
 
     /**
      * Returns list of {@link ClaimStatus}
@@ -382,7 +851,8 @@ public class ReferenceData {
     /**
      * Returns community area, defining where claims can be submitted. Returns
      * in WKT format.
-     * @return 
+     *
+     * @return
      */
     public String getCommunityArea() {
         if (cacheEjb.containsKey(COMMUNITY_AREA)) {
@@ -460,7 +930,7 @@ public class ReferenceData {
         return result.getDisplayValue();
     }
 
-    private <T extends AbstractCodeEntity> T createDummy(T entity) {
+    public <T extends AbstractCodeEntity> T createDummy(T entity) {
         entity.setCode("");
         entity.setDisplayValue(" ");
         return entity;

@@ -14,18 +14,10 @@
             </ui:define>
             <ui:define name="head2">
                 <script>
-                    function printClaim() {
-                        var wnd = window.open("#{request.contextPath}/claim/ClaimPrint.xhtml?id=#{claimPageBean.id}", "_blank", "width=900,height=600,menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
-                                return false;
-                            }
-                            function printClaimCert() {
-                                var wnd = window.open("#{request.contextPath}/claim/ClaimCertificatePrint.xhtml?id=#{claimPageBean.id}", "_blank", "width=900,height=600,menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
-                                        return false;
-                                    }
-                                    function printForm23() {
-                                        var wnd = window.open("#{request.contextPath}/claim/Form23Print.xhtml?id=#{claimPageBean.id}", "_blank", "width=900,height=600,menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
-                                                return false;
-                                            }
+                    function print(reportName) {
+                        var wnd = window.open("#{request.contextPath}/claim/WorkflowDocumentPrint.xhtml?reportName=" + reportName + "&amp;id=#{claimPageBean.id}", "_blank", "width=900,height=600,menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
+                        return false;
+                    }
                 </script>
             </ui:define>
             <ui:define name="content">
@@ -35,89 +27,100 @@
                         <span class="PublicDisplayLabel"><i class="glyphicon glyphicon-bullhorn"></i> #{msg.CLAIM_PAGE_ON_PUBLIC_DISPLAY}</span>
                     </ui:fragment>
                     <br />
-                    <h:panelGroup class="btn-group">
-                        <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_ASSIGN}"
-                                         rendered="#{claimPageBean.canAssign}"
-                                         action="#{claimPageBean.assignClaim()}"
-                                         onclick="return confirm('#{msg.CLAIM_PAGE_ASSIGN_WARNING}') ? blockUI() : false" />
-                        <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_UNASSIGN}"
-                                         rendered="#{claimPageBean.canUnAssign}"
-                                         action="#{claimPageBean.unAssignClaim()}" 
-                                         onclick="return confirm('#{msg.CLAIM_PAGE_UNASSIGN_WARNING}') ? blockUI() : false" />
-                        <h:outputLink value="#{request.contextPath}/claim/Claim.xhtml?id=#{claimPageBean.id}" 
-                                      class="btn btn-default" 
-                                      onclick="blockUI()"
-                                      rendered="#{claimPageBean.canEdit}">
-                            #{msg.GENERAL_LABEL_EDIT}
-                        </h:outputLink>
-                        <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_SUBMIT}"
-                                         rendered="#{claimPageBean.canSubmit}"
-                                         action="#{claimPageBean.submitClaim()}"
-                                         onclick="return confirm('#{msg.CLAIM_PAGE_SUBMIT_WARNING}') ? blockUI() : false" />
-                        <h:outputLink value="#{request.contextPath}/claim/Claim.xhtml?challengedId=#{claimPageBean.id}" 
-                                      class="btn btn-default" 
-                                      onclick="blockUI()"
-                                      rendered="#{claimPageBean.canChallenge}">
-                            #{msg.GENERAL_LABEL_CHALLENGE}
-                        </h:outputLink>
-                        <h:commandButton class="btn btn-default" value="#{msg.CLAIM_PAGE_APPROVE_REVIEW}"
-                                         rendered="#{claimPageBean.canApproveReview}"
-                                         action="#{claimPageBean.approveReviewClaim()}"
-                                         onclick="return confirm('#{msg.CLAIM_PAGE_APPROVE_REVIEW_WARNING}') ? blockUI() : false" />
-                        <h:commandButton class="btn btn-default" value="#{msg.CLAIM_PAGE_REVERT_REVIEW}"
-                                         rendered="#{claimPageBean.canRevertReview}"
-                                         action="#{claimPageBean.revertClaimReview()}"
-                                         onclick="return confirm('#{msg.CLAIM_PAGE_REVERT_REVIEW_WARNING}') ? blockUI() : false" />
-                        <h:commandButton class="btn btn-default" value="#{msg.CLAIM_PAGE_APPROVE_MODERATION}"
-                                         rendered="#{claimPageBean.canApproveModeration}"
-                                         action="#{claimPageBean.approveModerationClaim()}"
-                                         onclick="return confirm('#{msg.CLAIM_PAGE_APPROVE_MODERATION_WARNING}') ? blockUI() : false" />
-                        <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_WITHDRAW}"
-                                         rendered="#{claimPageBean.canWithdraw}"
-                                         action="#{claimPageBean.withdrawClaim()}"
-                                         onclick="return confirm('#{msg.CLAIM_PAGE_WITHDRAW_WARNING}') ? blockUI() : false" />
-                        <h:button class="btn btn-default" onclick="$('#rejectDialog').modal('show');
-                                return false;" 
-                                  value="#{msg.GENERAL_LABEL_REJECT}" rendered="#{claimPageBean.canReject}" />
-                        <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_DELETE}"
-                                         rendered="#{claimPageBean.canDelete}"
-                                         onclick="return confirm('#{msg.CLAIM_PAGE_DELETE_WARNING}') ? blockUI() : false"
-                                         action="#{claimPageBean.deleteClaim()}" />
-                        <h:outputLink value="" class="btn btn-default" onclick="return printClaim()">
-                            #{msg.GENERAL_LABEL_PRINT}
-                        </h:outputLink>
-                        <h:outputLink value="" class="btn btn-default" 
-                                      rendered="#{claimPageBean.canPrintCertificate}"
-                                      onclick="return printClaimCert()">
-                            #{msg.GENERAL_LABEL_PRINT_CERT}
-                        </h:outputLink>
-                        <h:outputLink value="" class="btn btn-default" 
-                                      rendered="#{claimPageBean.canPrintCertificate}"
-                                      onclick="return printForm23()">
-                            #{msg.GENERAL_LABEL_PRINT_FORM23}
-                        </h:outputLink>
-                        <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_ISSUE}"
-                                         rendered="#{claimPageBean.canIssueCertificate}"
-                                         action="#{claimPageBean.issueCertificate()}" />
+                    
+                    <h:panelGroup id="claimToolbar" layout="block">
+                        <h:panelGroup class="btn-group">
+                            <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_ASSIGN}"
+                                             rendered="#{claimPageBean.canAssign}"
+                                             action="#{claimPageBean.assignClaim()}"
+                                             onclick="return confirm('#{msg.CLAIM_PAGE_ASSIGN_WARNING}') ? blockUI() : false" />
 
-                        <h:outputLink value="#{request.contextPath}/claim/TransferClaim.xhtml?id=#{claimPageBean.id}" 
-                                      class="btn btn-default" 
-                                      onclick="blockUI()"
-                                      rendered="#{claimPageBean.canTransfer}">
-                            <f:param name="action" value="transfer" />
-                            #{msg.GENERAL_LABEL_TRANSFER}
-                        </h:outputLink>
+                            <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_UNASSIGN}"
+                                             rendered="#{claimPageBean.canUnAssign}"
+                                             action="#{claimPageBean.unAssignClaim()}" 
+                                             onclick="return confirm('#{msg.CLAIM_PAGE_UNASSIGN_WARNING}') ? blockUI() : false" />
 
-                        <h:outputLink value="#{request.contextPath}/claim/Mortgage.xhtml?id=#{claimPageBean.id}" 
-                                      class="btn btn-default" 
-                                      onclick="blockUI()"
-                                      rendered="#{claimPageBean.canTransfer}">
-                            <f:param name="action" value="restriction" />
-                            #{msg.GENERAL_LABEL_REG_MORTGAGE}
-                        </h:outputLink>
+                            <h:outputLink value="#{request.contextPath}/claim/Claim.xhtml?id=#{claimPageBean.id}" 
+                                          class="btn btn-default" 
+                                          onclick="blockUI()"
+                                          rendered="#{claimPageBean.canEdit}">
+                                #{msg.GENERAL_LABEL_EDIT}
+                            </h:outputLink>
 
-                        <h:inputHidden value="#{claimPageBean.id}" />
+                            <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_SUBMIT}"
+                                             rendered="#{claimPageBean.canSubmit}"
+                                             action="#{claimPageBean.submitClaim()}"
+                                             onclick="return confirm('#{msg.CLAIM_PAGE_SUBMIT_WARNING}') ? blockUI() : false" />
+
+                            <h:commandButton class="btn btn-default" value="#{msg.CLAIM_PAGE_APPROVE_REVIEW}"
+                                             rendered="#{claimPageBean.canApproveReview}"
+                                             action="#{claimPageBean.approveReviewClaim()}"
+                                             onclick="return confirm('#{msg.CLAIM_PAGE_APPROVE_REVIEW_WARNING}') ? blockUI() : false" />
+
+                            <h:commandButton class="btn btn-default" value="#{msg.CLAIM_PAGE_REVERT_REVIEW}"
+                                             rendered="#{claimPageBean.canRevertReview}"
+                                             action="#{claimPageBean.revertClaimReview()}"
+                                             onclick="return confirm('#{msg.CLAIM_PAGE_REVERT_REVIEW_WARNING}') ? blockUI() : false" />
+
+                            <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_WITHDRAW}"
+                                             rendered="#{claimPageBean.canWithdraw}"
+                                             action="#{claimPageBean.withdrawClaim()}"
+                                             onclick="return confirm('#{msg.CLAIM_PAGE_WITHDRAW_WARNING}') ? blockUI() : false" />
+
+                            <h:button class="btn btn-default" onclick="$('#rejectDialog').modal('show');
+                                    return false;" 
+                                      value="#{msg.GENERAL_LABEL_REJECT}" rendered="#{claimPageBean.canReject}" />
+
+                            <h:commandButton class="btn btn-default" value="#{msg.GENERAL_LABEL_DELETE}"
+                                             rendered="#{claimPageBean.canDelete}"
+                                             onclick="return confirm('#{msg.CLAIM_PAGE_DELETE_WARNING}') ? blockUI() : false"
+                                             action="#{claimPageBean.deleteClaim()}" />
+
+                            <h:outputLink value="#{request.contextPath}/claim/TransferClaim.xhtml?id=#{claimPageBean.id}" 
+                                          class="btn btn-default" 
+                                          onclick="blockUI()"
+                                          rendered="#{claimPageBean.canTransfer}">
+                                <f:param name="action" value="transfer" />
+                                #{msg.GENERAL_LABEL_TRANSFER}
+                            </h:outputLink>
+
+                            <h:outputLink value="#{request.contextPath}/claim/Mortgage.xhtml?id=#{claimPageBean.id}" 
+                                          class="btn btn-default" 
+                                          onclick="blockUI()"
+                                          rendered="#{claimPageBean.canTransfer}">
+                                <f:param name="action" value="restriction" />
+                                #{msg.GENERAL_LABEL_REG_MORTGAGE}
+                            </h:outputLink>
+
+                            <ui:fragment rendered="#{claimPageBean.workflowStep ne null}">
+                                <ui:repeat value="#{claimPageBean.workflowStep.actions}" var="a">
+                                    <h:commandButton class="btn btn-default" value="#{a.buttonLabel}"
+                                                     rendered="#{claimPageBean.canApproveModeration and a.actionCode eq 'approve'}"
+                                                     action="#{claimPageBean.approveModerationClaim()}"
+                                                     onclick="return confirm('#{msg.CLAIM_PAGE_APPROVE_MODERATION_WARNING}') ? blockUI() : false" />
+
+                                    <h:outputLink value="" class="btn btn-default" 
+                                                  rendered="#{a.actionCode eq 'print'}"
+                                                  onclick="return print('#{a.reportName}')">
+                                        #{a.buttonLabel}
+                                    </h:outputLink>
+
+                                    <h:commandButton class="btn btn-default" value="#{a.buttonLabel}"
+                                                     rendered="#{claimPageBean.canIssueCertificate and a.actionCode eq 'issue'}"
+                                                     action="#{claimPageBean.issueCertificate()}" />
+                                </ui:repeat>                         
+                            </ui:fragment>
+
+                            <h:inputHidden value="#{claimPageBean.id}" />
+                        </h:panelGroup>
+
+                        <ui:fragment rendered="#{claimPageBean.workflowStep ne null}">
+                            <div style="font-size:10px;padding-top: 10px;">
+                                <span class="label label-info" style="font-size: 12px;">#{claimPageBean.workflowStep.nextStepTip}</span>
+                            </div>
+                        </ui:fragment>
                     </h:panelGroup>
+
                 </div>
                 <div class="content">
                     <div class="nav-tab-div">
@@ -127,7 +130,7 @@
                             <li><a href="#mapTab" data-toggle="tab" onclick="renderMap()">#{msg.CLAIM_PAGE_MAP}</a></li>
                             <li><a href="#attachments" data-toggle="tab">#{msg.CLAIM_PAGE_DOCUMENTS}</a></li>
                             <li><a href="#owners" data-toggle="tab">#{msg.CLAIM_PAGE_OWNERS}</a></li>
-                            <ui:fragment rendered="#{claimPageBean.canPrintCertificate}">
+                            <ui:fragment rendered="#{claimPageBean.canTransfer}">
                                 <li><a href="#restrictions" data-toggle="tab">#{msg.GENERAL_LABEL_RESTRICTIONS}</a></li>
                             </ui:fragment>
                             <li><a href="#additional" data-toggle="tab">#{msg.CLAIM_PAGE_ADJACENCIES}</a></li>
@@ -151,17 +154,17 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_LODGEMENT_DATE}
+                                            #{msg.CLAIM_PAGE_BLOCK}
                                         </label>
                                         <br />
-                                        #{dateBean.formatDate(claimPageBean.claim.lodgementDate)}
+                                        #{claimPageBean.claim.blockNumber}
                                     </div>
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_CHALLENGE_EXPIRATION}
+                                            #{msg.MAP_CONTROL_AREA}
                                         </label>
                                         <br />
-                                        #{dateBean.formatDate(claimPageBean.claim.challengeExpiryDate)}
+                                        <h:outputLabel value="#{claimPageBean.claim.claimArea}" /> m<sup>2</sup>
                                     </div>
                                 </div>
 
@@ -177,17 +180,44 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_START_DATE}
-                                        </label>
-                                        <br />
-                                        #{dateBean.getShortDate(claimPageBean.claim.startDate)}
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>
                                             #{msg.CLAIM_PAGE_LAND_USE}
                                         </label>
                                         <br />
                                         #{claimPageBean.landUseName}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_PROJECT}
+                                        </label>
+                                        <br />
+                                        #{claimPageBean.landProjectName}
+                                    </div>
+                                </div>
+
+                                <div class="splitter"></div>
+
+                                <div class="row">
+
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_LOCATION}
+                                        </label>
+                                        <br />
+                                        #{claimPageBean.location}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_NEIGHBORHOOD}
+                                        </label>
+                                        <br />
+                                        #{claimPageBean.claim.neighborhood}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_FINALIDADE}
+                                        </label>
+                                        <br />
+                                        #{claimPageBean.claim.description}
                                     </div>
                                 </div>
 
@@ -196,24 +226,22 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.MAP_CONTROL_AREA}
+                                            #{msg.CLAIM_PAGE_HAS_CONSTRUCTION}
                                         </label>
                                         <br />
-                                        <h:outputLabel value="#{claimPageBean.claim.claimArea}" /> m<sup>2</sup>
+                                        <ui:fragment rendered="#{claimPageBean.claim.hasConstructions}">
+                                            <i class="glyphicon glyphicon-ok"></i>
+                                        </ui:fragment>
                                     </div>
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_CLAIM_NAME}
+                                            #{msg.CLAIM_PAGE_CONSTRUCTION_DATE}
                                         </label>
                                         <br />
-                                        #{claimPageBean.claim.description}
+                                        #{dateBean.getShortDate(claimPageBean.claim.constructionDate)}
                                     </div>
                                     <div class="col-md-4">
-                                        <label>
-                                            #{msg.CLAIM_PAGE_ISSUANCE_DATE}
-                                        </label>
-                                        <br />
-                                        #{dateBean.formatDate(claimPageBean.claim.issuanceDate)}
+                                        &nbsp;
                                     </div>
                                 </div>
 
@@ -248,30 +276,10 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_CHALLENGED_CLAIM}
+                                            #{msg.CLAIM_PAGE_LODGEMENT_DATE}
                                         </label>
                                         <br />
-                                        <c:if test="#{not empty claimPageBean.challengedClaim}">
-                                            <a href="#{request.contextPath}/claim/ViewClaim.xhtml?id=#{claimPageBean.challengedClaim.id}">
-                                                ##{claimPageBean.challengedClaim.nr}
-                                            </a>
-                                        </c:if>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>
-                                            #{msg.CLAIM_PAGE_CHALLENGING_CLAIMS}
-                                        </label>
-                                        <br />
-                                        <c:if test="#{not empty claimPageBean.challengingClaims}">
-                                            <ui:repeat value="#{claimPageBean.challengingClaims}" var="c" varStatus="status">
-                                                <c:if test="#{status.index gt 0}">
-                                                    , 
-                                                </c:if>
-                                                <a href="#{request.contextPath}/claim/ViewClaim.xhtml?id=#{c.id}">
-                                                    ##{c.nr}
-                                                </a>
-                                            </ui:repeat>
-                                        </c:if>
+                                        #{dateBean.formatDate(claimPageBean.claim.lodgementDate)}
                                     </div>
                                     <div class="col-md-4">
                                         <label>
@@ -279,6 +287,9 @@
                                         </label>
                                         <br />
                                         <h:outputText value="#{claimPageBean.statusName}" escape="false" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        &nbsp;
                                     </div>
                                 </div>
 
@@ -310,7 +321,7 @@
                                                 <a href="#{request.contextPath}/claim/ViewClaim.xhtml?id=#{c.id}">#{c.nr}</a>
                                             </ui:repeat>
                                         </div>
-                                        
+
                                         <div class="col-md-6">
                                             <label>
                                                 #{msg.CLAIM_PAGE_CHILDREN_CLAIMS}
@@ -344,7 +355,7 @@
                             </div>
                         </div>
 
-                        <ui:fragment rendered="#{claimPageBean.canPrintCertificate}">
+                        <ui:fragment rendered="#{claimPageBean.canTransfer}">
                             <div class="tab-pane" id="restrictions">
                                 <div style="padding: 15px 0px;width:800px;">
                                     <div class="HeaderCaption">

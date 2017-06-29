@@ -24,6 +24,11 @@ public class MessagesKeys {
      * 0.1
      */
     public static final String GENERAL_VERSION = "GENERAL_VERSION";
+    
+    /**
+     * Select
+     */
+    public static final String GENERAL_LABEL_SELECT = "GENERAL_LABEL_SELECT";
 
 // Login header
 

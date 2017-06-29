@@ -2,8 +2,6 @@ package org.sola.opentenure.services.boundary.ws;
 
 import java.util.List;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
@@ -18,8 +16,14 @@ import org.sola.cs.services.ejbs.claim.entities.ClaimStatus;
 import org.sola.cs.services.ejbs.claim.businesslogic.ClaimEJBLocal;
 import org.sola.cs.services.boundary.transferobjects.configuration.CrsTO;
 import org.sola.cs.services.boundary.transferobjects.referencedata.ClaimStatusTO;
+import org.sola.cs.services.boundary.transferobjects.referencedata.CommuneTO;
+import org.sola.cs.services.boundary.transferobjects.referencedata.CountryTO;
 import org.sola.cs.services.boundary.transferobjects.referencedata.IdTypeTO;
+import org.sola.cs.services.boundary.transferobjects.referencedata.LandProjectTO;
 import org.sola.cs.services.boundary.transferobjects.referencedata.LandUseTO;
+import org.sola.cs.services.boundary.transferobjects.referencedata.MaritalStatusTO;
+import org.sola.cs.services.boundary.transferobjects.referencedata.MunicipalityTO;
+import org.sola.cs.services.boundary.transferobjects.referencedata.ProvinceTO;
 import org.sola.cs.services.boundary.transferobjects.referencedata.RrrTypeTO;
 import org.sola.cs.services.boundary.transferobjects.referencedata.SourceTypeTO;
 import org.sola.cs.services.boundary.transferobjects.system.LanguageTO;
@@ -276,4 +280,272 @@ public class ReferenceDataResource extends AbstractWebRestService {
             throw processException(e, localeCode);
         }
     }
+    
+    /**
+     * Returns List of {@link CountryTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getcountries|getCountries}")
+    public String getCountries(@PathParam(value = LOCALE_CODE) String localeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getCountries(localeCode, true), CountryTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link CountryTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param provinceCode Province code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getcountriesbyprovince|getCountriesByProvince}/{provinceCode}")
+    public String getCountriesByProvince(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "provinceCode") String provinceCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getCountriesByProvinceCode(provinceCode, localeCode, true), CommuneTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link ProvinceTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getallprovinces|getAllProvinces}")
+    public String getProvinces(@PathParam(value = LOCALE_CODE) String localeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getProvinces(localeCode, true), ProvinceTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link ProvinceTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param countryCode Country code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getprovinces|getProvinces}/{countryCode}")
+    public String getProvinces(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "countryCode") String countryCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getProvinces(countryCode, localeCode, true), ProvinceTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link ProvinceTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param provinceCode Province code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getprovincesbyprovince|getProvincesByProvince}/{provinceCode}")
+    public String getProvincesByProvince(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "provinceCode") String provinceCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getProvincesByProvinceCode(provinceCode, localeCode, true), ProvinceTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link ProvinceTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param municipalityCode Municipality code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getprovincesbymunicipality|getProvincesByMunicipality}/{municipalityCode}")
+    public String getProvincesByMunicipality(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "municipalityCode") String municipalityCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getProvincesByMunicipalityCode(municipalityCode, localeCode, true), CommuneTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link MunicipalityTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getallmunicipalities|getAllMunicipalities}")
+    public String getMunicipalities(@PathParam(value = LOCALE_CODE) String localeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getMunicipalities(localeCode, true), MunicipalityTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link MunicipalityTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param provinceCode Province code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getmunicipalities|getMunicipalities}/{provinceCode}")
+    public String getMunicipalities(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "provinceCode") String provinceCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getMunicipalities(provinceCode, localeCode, true), MunicipalityTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link MunicipalityTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param municipalityCode Commune code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getmunicipalitiesbymunicipality|getMunicipalitiesByMunicipality}/{municipalityCode}")
+    public String getMunicipalitiesByMunicipality(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "municipalityCode") String municipalityCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getMunicipalitiesByMunicipalityCode(municipalityCode, localeCode, true), MunicipalityTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link MunicipalityTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param communeCode Commune code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getmunicipalitiesbycommune|getMunicipalitiesByCommune}/{communeCode}")
+    public String getMunicipalitiesByCommune(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "communeCode") String communeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getMunicipalitiesByCommuneCode(communeCode, localeCode, true), CommuneTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link CommuneTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getallcommunes|getAllCommunes}")
+    public String getCommunes(@PathParam(value = LOCALE_CODE) String localeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getCommunes(localeCode, true), CommuneTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link CommuneTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param municipalityCode Municipality code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getcommunes|getCommunes}/{municipalityCode}")
+    public String getCommunes(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "municipalityCode") String municipalityCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getCommunes(municipalityCode, localeCode, true), CommuneTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link CommuneTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @param communeCode Commune code
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getcommunesbycommune|getCommunesByCommune}/{communeCode}")
+    public String getCommunesByCommune(
+            @PathParam(value = LOCALE_CODE) String localeCode,
+            @PathParam(value = "communeCode") String communeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getCommunesByCommuneCode(communeCode, localeCode, true), CommuneTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+      
+    /**
+     * Returns List of {@link MaritalStatusTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getmaritalstatuses|getMaritalStatuses}")
+    public String getMaritalStatuses(@PathParam(value = LOCALE_CODE) String localeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getMaritalStatuses(localeCode, true), MaritalStatusTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link LandProjectTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getlandprojects|getLandProjects}")
+    public String getLandProjects(@PathParam(value = LOCALE_CODE) String localeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getLandProjects(localeCode, true), LandProjectTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
 }
+

@@ -50,7 +50,7 @@
                         </ul>
                     </div>
                     <div class="clearfix"></div>
-                    
+
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div class="tab-pane active" id="general">
@@ -59,51 +59,30 @@
                                     <div class="col-md-4">
                                         <label>
                                             #{msg.CLAIM_PAGE_NUMBER}
+                                            <i class="glyphicon glyphicon-required"></i>
                                         </label>
-                                        <br />
-                                        #{claimPageBean.claim.nr}
+                                        <h:inputText id="txtClaimNumber" 
+                                                     value="#{claimPageBean.claim.nr}"  
+                                                     class="form-control"
+                                                     maxlength="20"
+                                                     autocomplete="off" />
                                     </div>
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_LODGEMENT_DATE}
+                                            #{msg.CLAIM_PAGE_BLOCK}
                                         </label>
-                                        <br />
-                                        #{dateBean.formatDate(claimPageBean.claim.lodgementDate)}
+                                        <h:inputText id="txtBlockNumber" 
+                                                     value="#{claimPageBean.claim.blockNumber}"  
+                                                     class="form-control"
+                                                     maxlength="20"
+                                                     autocomplete="off" />
                                     </div>
                                     <div class="col-md-4">
-                                        <h:panelGroup rendered="not #{claimPageBean.allowChallengeExpiryDateChange}">
-                                            <label>
-                                                #{msg.CLAIM_PAGE_CHALLENGE_EXPIRATION}
-                                            </label>
-                                            <br />
-                                            #{dateBean.formatDate(claimPageBean.claim.challengeExpiryDate)}
-                                        </h:panelGroup>
-                                        <h:panelGroup layout="block" style="width:217px;" rendered="#{claimPageBean.allowChallengeExpiryDateChange}">
-                                            <label>
-                                                #{msg.CLAIM_PAGE_CHALLENGE_EXPIRATION} <i class="glyphicon glyphicon-required"></i>
-                                            </label>
-                                            <br />
-                                            <div style="width:145px;float:left;padding-right:5px;">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="glyphicon glyphicon-calendar"></i>
-                                                    </span>
-                                                    <h:inputText id="txtChallengeExpirationDate" 
-                                                                 value="#{claimPageBean.challengeExpiryDate}"  
-                                                                 class="form-control DateField"
-                                                                 maxlength="10"
-                                                                 autocomplete="off" />
-
-                                                </div>
-                                            </div>
-                                            <div style="width:70px;float:left;">
-                                                <h:inputText id="txtChallengeExpirationTime" 
-                                                         value="#{claimPageBean.challengeExpiryTime}"  
-                                                         class="form-control TimeField"
-                                                         maxlength="5"
-                                                         autocomplete="off" />
-                                            </div>
-                                        </h:panelGroup>
+                                        <label>
+                                            #{msg.MAP_CONTROL_AREA}
+                                        </label>
+                                        <br />
+                                        <h:outputLabel value="#{claimPageBean.claim.claimArea}" /> m<sup>2</sup>
                                     </div>
                                 </div>
 
@@ -113,9 +92,7 @@
                                     <div class="col-md-4">
                                         <label>
                                             #{msg.CLAIM_PAGE_CLAIM_TYPE} 
-                                            <h:outputLabel rendered="#{not claimPageBean.isSubmitted}">
-                                                <i class="glyphicon glyphicon-required"></i>
-                                            </h:outputLabel>
+                                            <i class="glyphicon glyphicon-required"></i>
                                         </label>
                                         <h:selectOneListbox
                                             id="cbxClaimType" 
@@ -129,26 +106,8 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_START_DATE}
-                                        </label>
-                                        <br />
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <i class="glyphicon glyphicon-calendar"></i>
-                                            </span>
-                                            <h:inputText id="txtStartDate" 
-                                                         value="#{claimPageBean.startDate}"  
-                                                         class="form-control DateField"
-                                                         maxlength="10"
-                                                         autocomplete="off" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>
                                             #{msg.CLAIM_PAGE_LAND_USE} 
-                                            <h:outputLabel rendered="#{not claimPageBean.isSubmitted}">
-                                                <i class="glyphicon glyphicon-required"></i>
-                                            </h:outputLabel>
+                                            <i class="glyphicon glyphicon-required"></i>
                                         </label>
                                         <br />
                                         <h:selectOneListbox
@@ -161,6 +120,21 @@
                                                            itemValue="#{t.code}" />
                                         </h:selectOneListbox>
                                     </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_PROJECT} 
+                                        </label>
+                                        <br />
+                                        <h:selectOneListbox
+                                            id="cbxProject" 
+                                            size="1"
+                                            value="#{claimPageBean.claim.landProjectCode}"
+                                            class="form-control">
+                                            <f:selectItems value="#{claimPageBean.landProjects}" var="p"
+                                                           itemLabel="#{p.displayValue}" 
+                                                           itemValue="#{p.code}" />
+                                        </h:selectOneListbox>
+                                    </div>
                                 </div>
 
                                 <div class="splitter"></div>
@@ -168,16 +142,65 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.MAP_CONTROL_AREA}
+                                            #{msg.CLAIM_PAGE_LOCATION} 
+                                            <i class="glyphicon glyphicon-required"></i>
                                         </label>
                                         <br />
-                                        <h:outputLabel value="#{claimPageBean.claim.claimArea}" /> m<sup>2</sup>
+                                        <a href="#" onclick="return selectParcelLocation();">
+                                            <h:outputText id="lblLocation" value="#{claimPageBean.location}" />
+                                        </a>
+                                        <h:inputHidden id="hfCommune" value="#{claimPageBean.claim.communeCode}" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_CLAIM_NAME}
+                                            #{msg.CLAIM_PAGE_NEIGHBORHOOD}
                                         </label>
-                                        <h:inputTextarea value="#{claimPageBean.claim.description}" class="form-control" rows="2"></h:inputTextarea>
+                                        <h:inputText id="txtNeighborhood" 
+                                                     value="#{claimPageBean.claim.neighborhood}"  
+                                                     class="form-control"
+                                                     maxlength="150"
+                                                     autocomplete="off" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_FINALIDADE}
+                                        </label>
+                                        <h:inputText id="txtDesciption" 
+                                                     value="#{claimPageBean.claim.description}"  
+                                                     class="form-control"
+                                                     maxlength="250"
+                                                     autocomplete="off" />
+                                    </div>
+                                </div>
+
+                                <div class="splitter"></div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_HAS_CONSTRUCTION}
+                                        </label>
+                                        <br />
+                                        <h:selectBooleanCheckbox id="chbxHasConstructions" value="#{claimPageBean.claim.hasConstructions}" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_CONSTRUCTION_DATE}
+                                        </label>
+                                        <br />
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </span>
+                                            <h:inputText id="txtConstructionDate" 
+                                                         value="#{claimPageBean.constructionDate}"  
+                                                         class="form-control DateField"
+                                                         maxlength="10"
+                                                         autocomplete="off" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+
                                     </div>
                                 </div>
 
@@ -207,43 +230,15 @@
                                     </div>
                                 </div>
 
-                                
                                 <div class="splitter"></div>
 
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label>
-                                            #{msg.CLAIM_PAGE_CHALLENGED_CLAIM}
+                                            #{msg.CLAIM_PAGE_LODGEMENT_DATE}
                                         </label>
                                         <br />
-                                        <c:if test="#{not empty claimPageBean.challengedClaim}">
-                                            <a href="#{request.contextPath}/claim/ViewClaim.xhtml?id=#{claimPageBean.challengedClaim.id}">
-                                                ##{claimPageBean.challengedClaim.nr}
-                                            </a>
-                                        </c:if>
-                                        <c:if test="#{claimPageBean.claim.isNew() and empty claimPageBean.challengedClaim}">
-                                            <h:inputText id="txtChallengedClaim" 
-                                                         value="#{claimPageBean.challengedClaimNr}"  
-                                                         class="form-control"
-                                                         maxlength="15"
-                                                         autocomplete="off" />
-                                        </c:if>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>
-                                            #{msg.CLAIM_PAGE_CHALLENGING_CLAIMS}
-                                        </label>
-                                        <br />
-                                        <c:if test="#{not empty claimPageBean.challengingClaims}">
-                                            <ui:repeat value="#{claimPageBean.challengingClaims}" var="c" varStatus="status">
-                                                <c:if test="#{status.index gt 0}">
-                                                    , 
-                                                </c:if>
-                                                <a href="#{request.contextPath}/claim/ViewClaim.xhtml?id=#{c.id}">
-                                                    ##{c.nr}
-                                                </a>
-                                            </ui:repeat>
-                                        </c:if>
+                                        #{dateBean.formatDate(claimPageBean.claim.lodgementDate)}
                                     </div>
                                     <div class="col-md-4">
                                         <label>
@@ -252,10 +247,13 @@
                                         <br />
                                         #{claimPageBean.statusName}
                                     </div>
+                                    <div class="col-md-4">
+
+                                    </div>
                                 </div>
-                                
+
                                 <div class="splitter"></div>
-                                
+
                                 <h:panelGroup layout="block" class="row" rendered="#{not empty claimPageBean.claim.rejectionReasonCode}">
                                     <div class="col-md-12">
                                         <label>
@@ -293,7 +291,7 @@
                                 </ui:include>
                             </div>
                         </div>
-                        
+
                         <div class="tab-pane" id="comments">
                             <div style="padding: 15px 0px;width:850px;">
                                 <ui:include src="/controls/ClaimComments.xhtml">
@@ -314,42 +312,96 @@
 
                                 <label>
                                     #{msg.CLAIM_PAGE_NORTH_ADJACENCY}
+                                    <i class="glyphicon glyphicon-required"></i>
                                 </label>
+                                <br />
                                 <h:inputText value="#{claimPageBean.claim.northAdjacency}" 
                                              class="form-control"
+                                             style="width: 80%; display: inline;margin-right: 10px;"
                                              maxlength="500"
                                              autocomplete="off" />
+                                <h:selectOneListbox
+                                    id="cbxNorthAdjType" 
+                                    size="1"
+                                    style="width: 18%;display: inline;"
+                                    value="#{claimPageBean.claim.northAdjacencyTypeCode}"
+                                    class="form-control">
+                                    <f:selectItems value="#{claimPageBean.adjacencyTypes}" var="a"
+                                                   itemLabel="#{a.displayValue}" 
+                                                   itemValue="#{a.code}" />
+                                </h:selectOneListbox>
 
                                 <div class="splitter"></div>
 
                                 <label>
                                     #{msg.CLAIM_PAGE_SOUTH_ADJACENCY}
+                                    <i class="glyphicon glyphicon-required"></i>
                                 </label>
+                                <br />
                                 <h:inputText value="#{claimPageBean.claim.southAdjacency}" 
                                              class="form-control"
+                                             style="width: 80%; display: inline;margin-right: 10px;"
                                              maxlength="500"
                                              autocomplete="off" />
+                                <h:selectOneListbox
+                                    id="cbxSouthAdjType" 
+                                    size="1"
+                                    style="width: 18%;display: inline;"
+                                    value="#{claimPageBean.claim.southAdjacencyTypeCode}"
+                                    class="form-control">
+                                    <f:selectItems value="#{claimPageBean.adjacencyTypes}" var="a"
+                                                   itemLabel="#{a.displayValue}" 
+                                                   itemValue="#{a.code}" />
+                                </h:selectOneListbox>
 
                                 <div class="splitter"></div>
 
                                 <label>
                                     #{msg.CLAIM_PAGE_EAST_ADJACENCY}
+                                    <i class="glyphicon glyphicon-required"></i>
                                 </label>
+                                <br />
                                 <h:inputText value="#{claimPageBean.claim.eastAdjacency}" 
                                              class="form-control"
+                                             style="width: 80%; display: inline;margin-right: 10px;"
                                              maxlength="500"
                                              autocomplete="off" />
-
+                                
+                                <h:selectOneListbox
+                                    id="cbxEastAdjType" 
+                                    size="1"
+                                    style="width: 18%;display: inline;"
+                                    value="#{claimPageBean.claim.eastAdjacencyTypeCode}"
+                                    class="form-control">
+                                    <f:selectItems value="#{claimPageBean.adjacencyTypes}" var="a"
+                                                   itemLabel="#{a.displayValue}" 
+                                                   itemValue="#{a.code}" />
+                                </h:selectOneListbox>
+                                
                                 <div class="splitter"></div>
 
                                 <label>
                                     #{msg.CLAIM_PAGE_WEST_ADJACENCY}
+                                    <i class="glyphicon glyphicon-required"></i>
                                 </label>
+                                <br />
                                 <h:inputText value="#{claimPageBean.claim.westAdjacency}" 
                                              class="form-control"
+                                             style="width: 80%; display: inline;margin-right: 10px;"
                                              maxlength="500"
                                              autocomplete="off" />
-
+                                
+                                <h:selectOneListbox
+                                    id="cbxWestAdjType" 
+                                    size="1"
+                                    style="width: 18%;display: inline;"
+                                    value="#{claimPageBean.claim.westAdjacencyTypeCode}"
+                                    class="form-control">
+                                    <f:selectItems value="#{claimPageBean.adjacencyTypes}" var="a"
+                                                   itemLabel="#{a.displayValue}" 
+                                                   itemValue="#{a.code}" />
+                                </h:selectOneListbox>
+                                
                                 <div class="splitter"></div>
                             </div>
                         </div>
@@ -359,7 +411,7 @@
                                 <uc:MapClaims id="mapClaimsCtrl" instantMapRender="false" mapHeight="500" claim="#{claimPageBean.claim}" isMapEditable="true"></uc:MapClaims>
                             </div>
                         </div>
-                        
+
                         <ui:include src="/controls/DynaForm.xhtml">
                             <ui:param name="allowEdit" value="true" rendererType="java.lang.Boolean" />
                             <ui:param name="columnsNumber" value="3" rendererType="java.lang.Integer" />
@@ -368,13 +420,29 @@
                     </div>
                 </div>
 
+                <ui:include src="/controls/Location.xhtml"></ui:include>
                 <script language="javascript">
-                    $(function() {
+                    $(function () {
                         bindDateFields('#{dateBean.datePattern.toLowerCase()}');
                     });
 
                     function checkForm() {
                         return saveFeatures(#{claimPageBean.isGeometryRequired});
+                    }
+
+                    function saveParcelLocation() {
+                        if ($("#cbxCommunes").val() === '') {
+                            alert('#{err.CLAIM_SELECT_COMMUNE}');
+                            return false;
+                        }
+
+                        $("#mainForm\\:hfCommune").val($("#cbxCommunes").val());
+                        $("#mainForm\\:lblLocation").text(getAddressString());
+                        return true;
+                    }
+ 
+                    function selectParcelLocation() {
+                        selectLocation(null, null, null, $("#mainForm\\:hfCommune").val(), 0, saveParcelLocation);
                     }
                 </script>
             </ui:define>

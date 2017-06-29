@@ -1,6 +1,5 @@
 package org.sola.opentenure.services.boundary.beans.claim;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,6 +14,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.apache.commons.lang.ArrayUtils;
 import org.sola.common.ClaimStatusConstants;
 import org.sola.common.ConfigConstants;
 import org.sola.common.DateUtility;
@@ -22,11 +22,15 @@ import org.sola.common.FileUtility;
 import org.sola.common.RolesConstants;
 import org.sola.common.StringUtility;
 import org.sola.common.mapping.MappingManager;
+import org.sola.cs.services.ejb.refdata.entities.AdjacencyType;
 import org.sola.cs.services.ejb.refdata.entities.GenderType;
 import org.sola.cs.services.ejb.refdata.entities.IdType;
+import org.sola.cs.services.ejb.refdata.entities.LandProject;
 import org.sola.cs.services.ejb.refdata.entities.LandUseType;
+import org.sola.cs.services.ejb.refdata.entities.MaritalStatus;
 import org.sola.cs.services.ejb.refdata.entities.RejectionReason;
 import org.sola.cs.services.ejb.refdata.entities.RrrType;
+import org.sola.cs.services.ejb.refdata.entities.SourceType;
 import org.sola.cs.services.ejb.system.businesslogic.SystemCSEJBLocal;
 import org.sola.cs.services.ejbs.admin.businesslogic.AdminCSEJBLocal;
 import org.sola.cs.services.ejbs.claim.businesslogic.ClaimEJBLocal;
@@ -38,6 +42,9 @@ import org.sola.cs.services.ejbs.claim.entities.ClaimParty;
 import org.sola.cs.services.ejbs.claim.entities.ClaimPermissions;
 import org.sola.cs.services.ejbs.claim.entities.ClaimShare;
 import org.sola.cs.services.ejbs.claim.entities.Restriction;
+import org.sola.cs.services.ejbs.claim.entities.WorkflowAction;
+import org.sola.cs.services.ejbs.claim.entities.WorkflowRequiredDocument;
+import org.sola.cs.services.ejbs.claim.entities.WorkflowStep;
 import org.sola.opentenure.services.boundary.beans.AbstractBackingBean;
 import org.sola.opentenure.services.boundary.beans.exceptions.OTWebException;
 import org.sola.opentenure.services.boundary.beans.features.AdditionalLocationFeature;
@@ -123,6 +130,16 @@ public class ClaimPageBean extends AbstractBackingBean {
     private String challengeExpiryDate;
     private boolean isTransfer = false;
     private boolean isRestriction = false;
+    private boolean licenseForExtension;
+    private boolean licenseForConstruction;
+    private boolean leaseDocument;
+    private boolean licenseForConstructionProvince;
+    private boolean licenseForDemolish;
+    private boolean licenseForRefurbish;
+    private boolean licenseForFence;
+    private boolean licenseForSell;
+    private List<WorkflowStep> workflowSteps;
+    private WorkflowStep currentWorkflowStep;
 
     public ClaimPageBean() {
         super();
@@ -251,6 +268,18 @@ public class ClaimPageBean extends AbstractBackingBean {
         return dateBean.getShortDate(claim.getStartDate());
     }
 
+    public String getConstructionDate() {
+        return dateBean.getShortDate(claim.getConstructionDate());
+    }
+
+    public void setConstructionDate(String date) {
+        if (!StringUtility.isEmpty(date)) {
+            claim.setConstructionDate(DateUtility.convertToDate(date, dateBean.getDatePattern()));
+        } else {
+            claim.setConstructionDate(null);
+        }
+    }
+
     public void setStartDate(String startDate) {
         if (!StringUtility.isEmpty(startDate)) {
             claim.setStartDate(DateUtility.convertToDate(startDate, dateBean.getDatePattern()));
@@ -268,6 +297,18 @@ public class ClaimPageBean extends AbstractBackingBean {
             party.setBirthDate(DateUtility.convertToDate(birthday, dateBean.getDatePattern()));
         } else {
             party.setBirthDate(null);
+        }
+    }
+
+    public String getPartyIdIssueDate() {
+        return dateBean.getShortDate(party.getIdIssuanceDate());
+    }
+
+    public void setPartyIdIssueDate(String date) {
+        if (!StringUtility.isEmpty(date)) {
+            party.setIdIssuanceDate(DateUtility.convertToDate(date, dateBean.getDatePattern()));
+        } else {
+            party.setIdIssuanceDate(null);
         }
     }
 
@@ -315,6 +356,70 @@ public class ClaimPageBean extends AbstractBackingBean {
             return adminEjb.getUserFullName(userName);
         }
         return "";
+    }
+
+    public boolean isLicenseForExtension() {
+        return licenseForExtension;
+    }
+
+    public void setLicenseForExtension(boolean licenseForExtension) {
+        this.licenseForExtension = licenseForExtension;
+    }
+
+    public boolean isLicenseForConstruction() {
+        return licenseForConstruction;
+    }
+
+    public void setLicenseForConstruction(boolean licenseForConstruction) {
+        this.licenseForConstruction = licenseForConstruction;
+    }
+
+    public boolean isLeaseDocument() {
+        return leaseDocument;
+    }
+
+    public void setLeaseDocument(boolean leaseDocument) {
+        this.leaseDocument = leaseDocument;
+    }
+
+    public boolean isLicenseForConstructionProvince() {
+        return licenseForConstructionProvince;
+    }
+
+    public void setLicenseForConstructionProvince(boolean licenseForConstructionProvince) {
+        this.licenseForConstructionProvince = licenseForConstructionProvince;
+    }
+
+    public boolean isLicenseForDemolish() {
+        return licenseForDemolish;
+    }
+
+    public void setLicenseForDemolish(boolean licenseForDemolish) {
+        this.licenseForDemolish = licenseForDemolish;
+    }
+
+    public boolean isLicenseForRefurbish() {
+        return licenseForRefurbish;
+    }
+
+    public void setLicenseForRefurbish(boolean licenseForRefurbish) {
+        this.licenseForRefurbish = licenseForRefurbish;
+    }
+
+    public boolean isLicenseForFence() {
+        return licenseForFence;
+    }
+
+    public void setLicenseForFence(boolean licenseForFence) {
+        this.licenseForFence = licenseForFence;
+    }
+
+    public boolean isLicenseForSell() {
+        return licenseForSell;
+    }
+
+    public void setLicenseForSell(boolean licenseForSell) {
+        this.licenseForSell = licenseForSell;
     }
 
     public String getHeader() {
@@ -390,6 +495,21 @@ public class ClaimPageBean extends AbstractBackingBean {
         return refData.getLandUses(true, langBean.getLocale(), true);
     }
 
+    public LandProject[] getLandProjects() {
+        return refData.getLandProjects(true, langBean.getLocale(), true);
+    }
+
+    public String getLandProjectName() {
+        if (claim != null && !StringUtility.isEmpty(claim.getLandProjectCode())) {
+            return refData.getBeanDisplayValue(refData.getLandProjects(langBean.getLocale(), false), claim.getLandProjectCode());
+        }
+        return "";
+    }
+
+    public AdjacencyType[] getAdjacencyTypes() {
+        return refData.getAdjacencyTypes(true, langBean.getLocale(), true);
+    }
+
     public RejectionReason[] getRejectionReasons() {
         return refData.getRejectionReasons(false, langBean.getLocale(), true);
     }
@@ -400,6 +520,10 @@ public class ClaimPageBean extends AbstractBackingBean {
 
     public IdType[] getIdTypes() {
         return refData.getIdTypes(StringUtility.isEmpty(party.getIdTypeCode()), langBean.getLocale(), true);
+    }
+
+    public MaritalStatus[] getMaritalStatuses() {
+        return refData.getMaritalStatuses(StringUtility.isEmpty(party.getMaritalStatusCode()), langBean.getLocale(), true);
     }
 
     public String getGenderName() {
@@ -425,7 +549,21 @@ public class ClaimPageBean extends AbstractBackingBean {
 
     public String getIdTypeName() {
         if (claim != null && claim.getClaimant() != null) {
-            return refData.getBeanDisplayValue(refData.getIdTypes(langBean.getLocale(), false), claim.getClaimant().getIdTypeCode());
+            return getIdTypeName(claim.getClaimant().getIdTypeCode());
+        }
+        return "";
+    }
+
+    public String getMaritalStatusName(String code) {
+        if (!StringUtility.isEmpty(code)) {
+            return refData.getBeanDisplayValue(refData.getMaritalStatuses(langBean.getLocale(), false), code);
+        }
+        return "";
+    }
+
+    public String getClaimantMaritalStatusName() {
+        if (claim != null && claim.getClaimant() != null) {
+            return getMaritalStatusName(claim.getClaimant().getMaritalStatusCode());
         }
         return "";
     }
@@ -439,6 +577,67 @@ public class ClaimPageBean extends AbstractBackingBean {
             recorderName = getFullUserName(claim.getRecorderName());
         }
         return recorderName;
+    }
+
+    public String getLocation() {
+        if (claim != null && !StringUtility.isEmpty(claim.getCommuneCode())) {
+            return refData.getLocationStringByCommune(claim.getCommuneCode(), langBean.getLocale());
+        } else {
+            return msgProvider.getMessage(MessagesKeys.GENERAL_LABEL_SELECT);
+        }
+    }
+
+    public String getIdIssuanceLocation(ClaimParty p, boolean showSelect) {
+        if (p != null && (!StringUtility.isEmpty(p.getIdIssuanceCountryCode()) || !StringUtility.isEmpty(p.getIdIssuanceProvinceCode()))) {
+            if (!StringUtility.isEmpty(p.getIdIssuanceProvinceCode())) {
+                return refData.getLocationStringByProvince(p.getIdIssuanceProvinceCode(), langBean.getLocale());
+            } else if (!StringUtility.isEmpty(p.getIdIssuanceCountryCode())) {
+                return refData.getCountryName(p.getIdIssuanceCountryCode(), langBean.getLocale());
+            }
+        }
+        if (showSelect) {
+            return msgProvider.getMessage(MessagesKeys.GENERAL_LABEL_SELECT);
+        } else {
+            return "";
+        }
+    }
+
+    public String getPartyIdIssuanceLocation() {
+        return getIdIssuanceLocation(party, true);
+    }
+
+    public String getPartyBirthdayLocation() {
+        return getBirthdayLocation(party, true);
+    }
+
+    public String getBirthdayLocation(ClaimParty p, boolean showSelect) {
+        if (p != null && (!StringUtility.isEmpty(p.getBirthCountryCode()) || !StringUtility.isEmpty(p.getBirthCommuneCode()))) {
+            if (!StringUtility.isEmpty(p.getBirthCommuneCode())) {
+                return refData.getLocationStringByCommune(p.getBirthCommuneCode(), langBean.getLocale());
+            } else if (!StringUtility.isEmpty(p.getBirthCountryCode())) {
+                return refData.getCountryName(p.getBirthCountryCode(), langBean.getLocale());
+            }
+        }
+        if (showSelect) {
+            return msgProvider.getMessage(MessagesKeys.GENERAL_LABEL_SELECT);
+        } else {
+            return "";
+        }
+    }
+
+    public String getResidenceLocation(ClaimParty p, boolean showSelect) {
+        if (p != null && !StringUtility.isEmpty(p.getResidenceCommuneCode())) {
+            return refData.getLocationStringByCommune(p.getResidenceCommuneCode(), langBean.getLocale());
+        }
+        if (showSelect) {
+            return msgProvider.getMessage(MessagesKeys.GENERAL_LABEL_SELECT);
+        } else {
+            return "";
+        }
+    }
+
+    public String getPartyResidenceLocation() {
+        return getResidenceLocation(party, true);
     }
 
     public boolean isCanViewFullInfo() {
@@ -535,16 +734,16 @@ public class ClaimPageBean extends AbstractBackingBean {
     public boolean getHasHistory() {
         return (claim.getParentClaims() != null && claim.getParentClaims().size() > 0) || (claim.getChildClaims() != null && claim.getChildClaims().size() > 0);
     }
-    
-    public Claim[] getParentClaims(){
-        if(claim.getParentClaims() != null){
+
+    public Claim[] getParentClaims() {
+        if (claim.getParentClaims() != null) {
             return claim.getParentClaims().toArray(new Claim[claim.getParentClaims().size()]);
         }
         return new Claim[0];
     }
-    
-    public Claim[] getChildrenClaims(){
-        if(claim.getChildClaims()!= null){
+
+    public Claim[] getChildrenClaims() {
+        if (claim.getChildClaims() != null) {
             return claim.getChildClaims().toArray(new Claim[claim.getChildClaims().size()]);
         }
         return new Claim[0];
@@ -586,10 +785,6 @@ public class ClaimPageBean extends AbstractBackingBean {
 
     public boolean getCanIssueCertificate() {
         return getClaimPermissions().isCanIssue();
-    }
-
-    public boolean getCanPrintCertificate() {
-        return getClaimPermissions().isCanPrintCertificate();
     }
 
     public boolean getCanDelete() {
@@ -758,6 +953,32 @@ public class ClaimPageBean extends AbstractBackingBean {
 
                         claim.getRestrictions().add(restriction);
                     }
+
+                    // Initit documents checkboxes
+                    if (claim.getAttachments() != null) {
+                        for (Attachment attach : claim.getAttachments()) {
+                            if (attach.getEntityAction() == null || (attach.getEntityAction() != EntityAction.DELETE && attach.getEntityAction() != EntityAction.DISASSOCIATE)) {
+                                if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LEASE_DOCUMENT)) {
+                                    leaseDocument = true;
+                                }
+                                if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_CONSTRUCTION)) {
+                                    licenseForConstruction = true;
+                                }
+                                if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_CONSTRUCTION_BY_PROVINCE)) {
+                                    licenseForConstructionProvince = true;
+                                }
+                                if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_DEMOLISH)) {
+                                    licenseForDemolish = true;
+                                }
+                                if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_REHABILITATION)) {
+                                    licenseForRefurbish = true;
+                                }
+                                if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_EXTENTION)) {
+                                    licenseForExtension = true;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         } else {
@@ -813,6 +1034,9 @@ public class ClaimPageBean extends AbstractBackingBean {
         } else {
             canViewFullInfo = false;
         }
+
+        // Load worflow steps
+        workflowSteps = claimEjb.getWorkflowSteps(langBean.getLocale());
     }
 
     /**
@@ -918,6 +1142,63 @@ public class ClaimPageBean extends AbstractBackingBean {
                 getRestriction().getRestrictingParties().add(MappingManager.getMapper().map(party, ClaimParty.class));
             }
         }
+    }
+
+    public List<WorkflowStep> getWorkflowSteps() {
+        return workflowSteps;
+    }
+
+    public WorkflowStep getWorkflowStep() {
+        if (currentWorkflowStep != null) {
+            return currentWorkflowStep;
+        }
+
+        if (workflowSteps != null && workflowSteps.size() > 0 && claim != null) {
+            // Find workflow step, appropriate for the current state of the claim
+            for (WorkflowStep step : workflowSteps) {
+                if (step.getClaimStatusCode().equals(claim.getStatusCode())) {
+                    // Check size
+                    if (claim.getClaimArea() != null) {
+                        if ((step.isBiggerThanSize() && claim.getClaimArea() > step.getParcelSize())
+                                || (!step.isBiggerThanSize() && claim.getClaimArea() <= step.getParcelSize())) {
+                            // Check documents restrictions
+                            if (step.getRequiredDocumentTypes() != null && step.getRequiredDocumentTypes().size() > 0) {
+                                if (claim.getAttachments() != null && claim.getAttachments().size() > 0) {
+                                    boolean found = false;
+                                    for (WorkflowRequiredDocument reqDocType : step.getRequiredDocumentTypes()) {
+                                        found = false;
+                                        for (Attachment attach : claim.getAttachments()) {
+                                            if (reqDocType.getDocTypeCode().equals(attach.getTypeCode())) {
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+                                        if ((!found && step.isRequireAllDocs()) || (found && !step.isRequireAllDocs())) {
+                                            break;
+                                        }
+                                    }
+                                    // All required documents found on the claim. Return workflow step
+                                    if (found) {
+                                        currentWorkflowStep = step;
+                                    }
+                                }
+                            } else {
+                                // There are no required documents for this step, so return workflow step
+                                currentWorkflowStep = step;
+                            }
+                        }
+                    }
+                }
+                if (currentWorkflowStep != null) {
+                    break;
+                }
+            }
+        }
+        return currentWorkflowStep;
+    }
+
+    public void resetWorkflowStep() {
+        currentWorkflowStep = null;
     }
 
     public void issueCertificate() {
@@ -1060,11 +1341,10 @@ public class ClaimPageBean extends AbstractBackingBean {
             }
 
             // Set challenge expiration date 
-            if (getAllowChallengeExpiryDateChange()) {
-                DateFormat format = new SimpleDateFormat(dateBean.getDateFormatForDisplay() + " kk:mm");
-                claim.setChallengeExpiryDate(format.parse(challengeExpiryDate + " " + challengeExpiryTime));
-            }
-
+//            if (getAllowChallengeExpiryDateChange()) {
+//                DateFormat format = new SimpleDateFormat(dateBean.getDateFormatForDisplay() + " kk:mm");
+//                claim.setChallengeExpiryDate(format.parse(challengeExpiryDate + " " + challengeExpiryTime));
+//            }
             runUpdate(new Runnable() {
                 @Override
                 public void run() {
@@ -1186,8 +1466,13 @@ public class ClaimPageBean extends AbstractBackingBean {
 
     private boolean validateClaim() throws Exception {
         boolean isValid = true;
-        boolean fullValidation = !getIsSubmitted();
+        boolean fullValidation = true; //!getIsSubmitted();
 
+        // NR/Identificator
+        if (StringUtility.isEmpty(claim.getNr())) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_IDENTIFICATOR_REQUIRED)));
+        }
         // Type
         if (fullValidation && StringUtility.isEmpty(claim.getTypeCode())) {
             isValid = false;
@@ -1198,6 +1483,32 @@ public class ClaimPageBean extends AbstractBackingBean {
             isValid = false;
             getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_LAND_USE_REQUIRED)));
         }
+        // Location
+        if (StringUtility.isEmpty(claim.getCommuneCode())) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_COMMUNE_REQUIRED)));
+        }
+        // North adjacency 
+        if (StringUtility.isEmpty(claim.getNorthAdjacency()) || StringUtility.isEmpty(claim.getNorthAdjacencyTypeCode())) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_NORTH_ADJ_REQUIRED)));
+        }
+        // South adjacency 
+        if (StringUtility.isEmpty(claim.getSouthAdjacency()) || StringUtility.isEmpty(claim.getSouthAdjacencyTypeCode())) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_SOUTH_ADJ_REQUIRED)));
+        }
+        // East adjacency 
+        if (StringUtility.isEmpty(claim.getEastAdjacency()) || StringUtility.isEmpty(claim.getEastAdjacencyTypeCode())) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_EAST_ADJ_REQUIRED)));
+        }
+        // West adjacency 
+        if (StringUtility.isEmpty(claim.getWestAdjacency()) || StringUtility.isEmpty(claim.getWestAdjacencyTypeCode())) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_WEST_ADJ_REQUIRED)));
+        }
+
         // Claimant
         if (claim.getClaimant() == null) {
             isValid = false;
@@ -1205,14 +1516,90 @@ public class ClaimPageBean extends AbstractBackingBean {
         } else if (!validateParty(claim.getClaimant(), false)) {
             isValid = false;
         }
-        // Challenge expiry date
-        if (getAllowChallengeExpiryDateChange()) {
-            if (StringUtility.isEmpty(challengeExpiryDate) || StringUtility.isEmpty(challengeExpiryTime)) {
-                isValid = false;
-                getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CHALLENGE_EXPIRATION_DATE_REQUIRED)));
+
+        // Validate documents
+        boolean validLicenseForExtension = !licenseForExtension;
+        boolean validLicenseForConstruction = !licenseForConstruction;
+        boolean validLeaseDocument = !leaseDocument;
+        boolean validLicenseForConstructionProvince = !licenseForConstructionProvince;
+        boolean validLicenseForDemolish = !licenseForDemolish;
+        boolean validLicenseForRefurbish = !licenseForRefurbish;
+        boolean validLicenseForFence = true; //!licenseForFence;
+        boolean validLicenseForSell = true; //!licenseForSell;
+
+        if (claim.getAttachments() != null) {
+            for (Attachment attach : claim.getAttachments()) {
+                if (attach.getEntityAction() == null || (attach.getEntityAction() != EntityAction.DELETE && attach.getEntityAction() != EntityAction.DISASSOCIATE)) {
+                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LEASE_DOCUMENT)) {
+                        validLeaseDocument = true;
+                    }
+                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_CONSTRUCTION)) {
+                        validLicenseForConstruction = true;
+                    }
+                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_CONSTRUCTION_BY_PROVINCE)) {
+                        validLicenseForConstructionProvince = true;
+                    }
+                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_DEMOLISH)) {
+                        validLicenseForDemolish = true;
+                    }
+                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_REHABILITATION)) {
+                        validLicenseForRefurbish = true;
+                    }
+                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_EXTENTION)) {
+                        validLicenseForExtension = true;
+                    }
+                }
             }
         }
 
+        // licenseForExtension
+        if (!validLicenseForExtension) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_EXTENSION_LIC_REQUIRED)));
+        }
+        // licenseForConstruction
+        if (!validLicenseForConstruction) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CONSTRUCT_LIC_REQUIRED)));
+        }
+        // leaseDocument
+        if (!validLeaseDocument) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_LEASE_DOCUMENT_REQUIRED)));
+        }
+        // licenseForConstructionProvince
+        if (!validLicenseForConstructionProvince) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CONSTRUCT_PROV_LIC_REQUIRED)));
+        }
+        // licenseForDemolish
+        if (!validLicenseForDemolish) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_DEMOLISH_LIC_REQUIRED)));
+        }
+        // licenseForRefurbish
+        if (!validLicenseForRefurbish) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_REHABILITATION_LIC_REQUIRED)));
+        }
+        // licenseForFence
+        if (!validLicenseForFence) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_FENCING_LIC_REQUIRED)));
+        }
+        // licenseForSell
+        if (!validLicenseForSell) {
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_SELLING_LIC_REQUIRED)));
+        }
+
+        // Challenge expiry date
+//        if (getAllowChallengeExpiryDateChange()) {
+//            if (StringUtility.isEmpty(challengeExpiryDate) || StringUtility.isEmpty(challengeExpiryTime)) {
+//                isValid = false;
+//                getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CHALLENGE_EXPIRATION_DATE_REQUIRED)));
+//            }
+//        }
         // Mapped geometry
         String requireSpatial = systemEjb.getSetting(ConfigConstants.REQUIRES_SPATIAL, "1");
 
@@ -1293,17 +1680,20 @@ public class ClaimPageBean extends AbstractBackingBean {
                 getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CHALLENGED_CLAIM_NOT_FOUND)));
                 isValid = false;
             } else // Check challenged claim status
-             if (!challengedClaimTmp.getStatusCode().equalsIgnoreCase(ClaimStatusConstants.UNMODERATED)
+            {
+                if (!challengedClaimTmp.getStatusCode().equalsIgnoreCase(ClaimStatusConstants.UNMODERATED)
                         || challengedClaimTmp.getChallengeExpiryDate().before(Calendar.getInstance().getTime())
                         || !StringUtility.isEmpty(challengedClaimTmp.getChallengedClaimId())) {
                     getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CHALLENGED_CLAIM_CANT_CHALLENGED)));
                     isValid = false;
                 }
+            }
         }
 
-        // Check shares
-        isValid = validateShares(fullValidation);
-
+        if (isValid) {
+            // Check shares
+            isValid = validateShares(fullValidation);
+        }
         return isValid;
     }
 
@@ -1379,6 +1769,74 @@ public class ClaimPageBean extends AbstractBackingBean {
             }
             isValid = false;
         }
+
+        if (party.isPerson()) {
+            // Last name
+            if (StringUtility.isEmpty(party.getLastName())) {
+                if (throwException) {
+                    errors += "- " + msgProvider.getErrorMessage(ErrorKeys.CLAIM_LAST_NAME_REQUIRED) + "\r\n";
+                } else {
+                    getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_LAST_NAME_REQUIRED)));
+                }
+                isValid = false;
+            }
+            // Gender
+            if (StringUtility.isEmpty(party.getGenderCode())) {
+                if (throwException) {
+                    errors += "- " + msgProvider.getErrorMessage(ErrorKeys.CLAIM_CLAIMANT_GENDER_REQUIERD) + "\r\n";
+                } else {
+                    getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CLAIMANT_GENDER_REQUIERD)));
+                }
+                isValid = false;
+            }
+            // Birthday
+            if (party.getBirthDate() == null) {
+                if (throwException) {
+                    errors += "- " + msgProvider.getErrorMessage(ErrorKeys.CLAIM_BIRTHDAY_REQUIRED) + "\r\n";
+                } else {
+                    getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_BIRTHDAY_REQUIRED)));
+                }
+                isValid = false;
+            }
+            // Residence
+            if (StringUtility.isEmpty(party.getResidenceCommuneCode())) {
+                if (throwException) {
+                    errors += "- " + msgProvider.getErrorMessage(ErrorKeys.CLAIM_RESIDENCE_REQUIRED) + "\r\n";
+                } else {
+                    getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_RESIDENCE_REQUIRED)));
+                }
+                isValid = false;
+            }
+            // Father name
+            if (StringUtility.isEmpty(party.getFatherName())) {
+                if (throwException) {
+                    errors += "- " + msgProvider.getErrorMessage(ErrorKeys.CLAIM_FATHER_NAME_REQUIRED) + "\r\n";
+                } else {
+                    getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_FATHER_NAME_REQUIRED)));
+                }
+                isValid = false;
+            }
+            // Mother name
+            if (StringUtility.isEmpty(party.getMotherName())) {
+                if (throwException) {
+                    errors += "- " + msgProvider.getErrorMessage(ErrorKeys.CLAIM_MOTHER_NAME_REQUIRED) + "\r\n";
+                } else {
+                    getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_MOTHER_NAME_REQUIRED)));
+                }
+                isValid = false;
+            }
+        }
+
+        // Address
+        if (StringUtility.isEmpty(party.getAddress())) {
+            if (throwException) {
+                errors += "- " + msgProvider.getErrorMessage(ErrorKeys.CLAIM_ADDRESS_REQUIRED) + "\r\n";
+            } else {
+                getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_ADDRESS_REQUIRED)));
+            }
+            isValid = false;
+        }
+
         if (throwException && !StringUtility.isEmpty(errors)) {
             throw new Exception(errors);
         }
@@ -1390,6 +1848,9 @@ public class ClaimPageBean extends AbstractBackingBean {
             }
             if (StringUtility.isEmpty(party.getIdTypeCode())) {
                 party.setIdTypeCode(null);
+            }
+            if (StringUtility.isEmpty(party.getMaritalStatusCode())) {
+                party.setMaritalStatusCode(null);
             }
         }
         return isValid;
@@ -1615,7 +2076,6 @@ public class ClaimPageBean extends AbstractBackingBean {
     public void deleteAttachment(final String attachmentId) {
         try {
             Attachment attachment = null;
-
             for (Attachment attach : claim.getAttachments()) {
                 if (attach.getId().equalsIgnoreCase(attachmentId)) {
                     attachment = attach;
@@ -1626,10 +2086,9 @@ public class ClaimPageBean extends AbstractBackingBean {
 
             if (attachment != null) {
                 attachment.setEntityAction(EntityAction.DELETE);
-                if (getCanPrintCertificate()) {
-                    claimEjb.saveClaimAttachment(attachment, langBean.getLocale());
-                    claim.getAttachments().remove(attachment);
-                }
+                claimEjb.saveClaimAttachment(attachment, langBean.getLocale());
+                claim.getAttachments().remove(attachment);
+                resetWorkflowStep();
             }
         } catch (Exception e) {
             LogUtility.log("Failed to delete attachment", e);

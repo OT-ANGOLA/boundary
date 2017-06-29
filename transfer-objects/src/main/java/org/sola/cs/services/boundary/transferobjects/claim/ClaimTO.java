@@ -36,6 +36,17 @@ public class ClaimTO extends AbstractReadWriteTO {
     String serverUrl;
     private Date issuanceDate;
     
+    private String blockNumber;
+    private boolean hasConstructions;
+    private Date constructionDate;
+    private String northAdjacencyTypeCode;
+    private String southAdjacencyTypeCode;
+    private String eastAdjacencyTypeCode;
+    private String westAdjacencyTypeCode;    
+    private String neighborhood;
+    private String landProjectCode;
+    private String communeCode;
+    
     public ClaimTO(){
         super();
     }
@@ -278,5 +289,85 @@ public class ClaimTO extends AbstractReadWriteTO {
 
     public void setIssuanceDate(Date issuanceDate) {
         this.issuanceDate = issuanceDate;
+    }
+
+    public String getBlockNumber() {
+        return blockNumber;
+    }
+
+    public void setBlockNumber(String blockNumber) {
+        this.blockNumber = blockNumber;
+    }
+
+    public boolean isHasConstructions() {
+        return hasConstructions;
+    }
+
+    public void setHasConstructions(boolean hasConstructions) {
+        this.hasConstructions = hasConstructions;
+    }
+
+    public Date getConstructionDate() {
+        return constructionDate;
+    }
+
+    public void setConstructionDate(Date constructionDate) {
+        this.constructionDate = constructionDate;
+    }
+
+    public String getNorthAdjacencyTypeCode() {
+        return northAdjacencyTypeCode;
+    }
+
+    public void setNorthAdjacencyTypeCode(String northAdjacencyTypeCode) {
+        this.northAdjacencyTypeCode = northAdjacencyTypeCode;
+    }
+
+    public String getSouthAdjacencyTypeCode() {
+        return southAdjacencyTypeCode;
+    }
+
+    public void setSouthAdjacencyTypeCode(String southAdjacencyTypeCode) {
+        this.southAdjacencyTypeCode = southAdjacencyTypeCode;
+    }
+
+    public String getEastAdjacencyTypeCode() {
+        return eastAdjacencyTypeCode;
+    }
+
+    public void setEastAdjacencyTypeCode(String eastAdjacencyTypeCode) {
+        this.eastAdjacencyTypeCode = eastAdjacencyTypeCode;
+    }
+
+    public String getWestAdjacencyTypeCode() {
+        return westAdjacencyTypeCode;
+    }
+
+    public void setWestAdjacencyTypeCode(String westAdjacencyTypeCode) {
+        this.westAdjacencyTypeCode = westAdjacencyTypeCode;
+    }
+
+    public String getNeighborhood() {
+        return neighborhood;
+    }
+
+    public void setNeighborhood(String neighborhood) {
+        this.neighborhood = neighborhood;
+    }
+
+    public String getLandProjectCode() {
+        return landProjectCode;
+    }
+
+    public void setLandProjectCode(String landProjectCode) {
+        this.landProjectCode = landProjectCode;
+    }
+
+    public String getCommuneCode() {
+        return communeCode;
+    }
+
+    public void setCommuneCode(String communeCode) {
+        this.communeCode = communeCode;
     }
 }

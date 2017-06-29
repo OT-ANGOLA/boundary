@@ -40,61 +40,106 @@
             <h:panelGroup id="pnlClaimant" layout="block">
                 <h:panelGroup rendered="#{claimPageBean.claim.claimant.person}" layout="block">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_NAME}
                             </label>
                             <br />
                             #{claimPageBean.claim.claimant.name} 
-                            #{claimPageBean.claim.claimant.lastName}
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
-                                #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY}
+                                #{msg.CLAIM_PAGE_CLAIMANT_OTHER_NAME}
                             </label>
                             <br />
-                            #{dateBean.getShortDate(claimPageBean.claim.claimant.birthDate)}
+                            #{claimPageBean.claim.claimant.otherName} 
                         </div>
-                    </div>
-
-                    <div class="splitter"></div>
-
-                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_LAST_NAME}
+                            </label>
+                            <br />
+                            #{claimPageBean.claim.claimant.lastName}
+                        </div>
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_GENDER}
                             </label>
                             <br />
                             #{claimPageBean.genderName} 
                         </div>
-                        <div class="col-md-6" style="line">
-                            &nbsp;
-                        </div>
                     </div>
-
+                    
                     <div class="splitter"></div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_ID_TYPE}
                             </label>
                             <br />
                             #{claimPageBean.idTypeName} 
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_ID_NUMBER}
                             </label>
                             <br />
                             #{claimPageBean.claim.claimant.idNumber}
                         </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_DATE}
+                            </label>
+                            <br />
+                            #{dateBean.getShortDate(claimPageBean.claim.claimant.idIssuanceDate)}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_PLACE}
+                            </label>
+                            <br />
+                            #{claimPageBean.getIdIssuanceLocation(claimPageBean.claim.claimant, false)}
+                        </div>
                     </div>
 
                     <div class="splitter"></div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY}
+                            </label>
+                            <br />
+                            #{dateBean.getShortDate(claimPageBean.claim.claimant.birthDate)}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY_PLACE}
+                            </label>
+                            <br />
+                            #{claimPageBean.getBirthdayLocation(claimPageBean.claim.claimant, false)}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_CIVIL_STATUS}
+                            </label>
+                            <br />
+                            #{claimPageBean.claimantMaritalStatusName}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_RESIDENCE}
+                            </label>
+                            <br />
+                            #{claimPageBean.getResidenceLocation(claimPageBean.claim.claimant, false)}
+                        </div>
+                    </div>
+
+                    <div class="splitter"></div>
+
+                    <div class="row">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_PHONE_NUMBER}
                             </label>
@@ -106,7 +151,7 @@
                                 <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
                             </h:panelGroup>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_MOBILE_PHONE_NUMBER}
                             </label>
@@ -118,19 +163,14 @@
                                 <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
                             </h:panelGroup>
                         </div>
-                    </div>
-
-                    <div class="splitter"></div>
-
-                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_ADDRESS}
                             </label>
                             <br />
                             #{claimPageBean.claim.claimant.address} 
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_EMAIL}
                             </label>
@@ -141,6 +181,39 @@
                             <h:panelGroup rendered="#{not claimPageBean.canViewFullInfo}">
                                 <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
                             </h:panelGroup>
+                        </div>
+                    </div>
+
+                    <div class="splitter"></div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_FATHER_NAME}
+                            </label>
+                            <br />
+                            #{claimPageBean.claim.claimant.fatherName}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_MOTHER_NAME}
+                            </label>
+                            <br />
+                            #{claimPageBean.claim.claimant.motherName}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_BENEFICIARY_NAME}
+                            </label>
+                            <br />
+                            #{claimPageBean.claim.claimant.beneficiaryName}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_BENEFICIARY_ID_NUMBER}
+                            </label>
+                            <br />
+                            #{claimPageBean.claim.claimant.beneficiaryIdNumber}
                         </div>
                     </div>
 
@@ -168,26 +241,33 @@
                     <div class="splitter"></div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <label>
-                                #{msg.CLAIM_PAGE_CLAIMANT_ID_TYPE}
-                            </label>
-                            <br />
-                            #{claimPageBean.idTypeName} 
-                        </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_REGISTRATION_NUMBER}
                             </label>
                             <br />
                             #{claimPageBean.claim.claimant.idNumber}
                         </div>
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_DATE}
+                            </label>
+                            <br />
+                            #{dateBean.getShortDate(claimPageBean.claim.claimant.idIssuanceDate)}
+                        </div>
+                        <div class="col-md-6">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_PLACE}
+                            </label>
+                            <br />
+                            #{claimPageBean.getIdIssuanceLocation(claimPageBean.claim.claimant, false)}
+                        </div>
                     </div>
 
                     <div class="splitter"></div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_PHONE_NUMBER}
                             </label>
@@ -199,7 +279,7 @@
                                 <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
                             </h:panelGroup>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_MOBILE_PHONE_NUMBER}
                             </label>
@@ -211,19 +291,14 @@
                                 <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
                             </h:panelGroup>
                         </div>
-                    </div>
-
-                    <div class="splitter"></div>
-
-                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_ADDRESS}
                             </label>
                             <br />
                             #{claimPageBean.claim.claimant.address} 
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_EMAIL}
                             </label>
@@ -282,7 +357,7 @@
                 <ui:include src="/controls/Party.xhtml"></ui:include>
 
                 <div style="display: none;" class="modal fade" id="claimantDialog" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog" style="width:700px;">
+                    <div class="modal-dialog" style="width:800px;">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">#{msg.GENERAL_LABEL_CLOSE}</span></button>

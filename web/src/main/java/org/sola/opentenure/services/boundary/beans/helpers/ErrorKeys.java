@@ -208,9 +208,78 @@ public class ErrorKeys {
      */
     public static final String CLAIM_MANAGE_MORTGAGES_ALLOWED = "CLAIM_MANAGE_MORTGAGES_ALLOWED";
     /**
-     * Claim type is required
+     * Tenure type is required
      */
     public static final String CLAIM_TYPE_REQUIRED = "CLAIM_TYPE_REQUIRED";
+    /**
+     * Identificator is required
+     */
+    public static final String CLAIM_IDENTIFICATOR_REQUIRED = "CLAIM_IDENTIFICATOR_REQUIRED";
+    /**
+     * Select location (commune)
+     */
+    public static final String CLAIM_COMMUNE_REQUIRED = "CLAIM_COMMUNE_REQUIRED";
+
+    /**
+     * North adjacency and its type are required
+     */
+    public static final String CLAIM_NORTH_ADJ_REQUIRED = "CLAIM_NORTH_ADJ_REQUIRED";
+
+    /**
+     * South adjacency and its type are required
+     */
+    public static final String CLAIM_SOUTH_ADJ_REQUIRED = "CLAIM_SOUTH_ADJ_REQUIRED";
+
+    /**
+     * East adjacency and its type are required
+     */
+    public static final String CLAIM_EAST_ADJ_REQUIRED = "CLAIM_EAST_ADJ_REQUIRED";
+
+    /**
+     * West adjacency and its type are required
+     */
+    public static final String CLAIM_WEST_ADJ_REQUIRED = "CLAIM_WEST_ADJ_REQUIRED";
+
+    /**
+     * Extension License has to be attached
+     */
+    public static final String CLAIM_EXTENSION_LIC_REQUIRED = "CLAIM_EXTENSION_LIC_REQUIRED";
+
+    /**
+     * Construction License has to be attached
+     */
+    public static final String CLAIM_CONSTRUCT_LIC_REQUIRED = "CLAIM_CONSTRUCT_LIC_REQUIRED";
+
+    /**
+     * Demolishing license has to be attached
+     */
+    public static final String CLAIM_DEMOLISH_LIC_REQUIRED = "CLAIM_DEMOLISH_LIC_REQUIRED";
+
+    /**
+     * Rehabilitation License has to be attached
+     */
+    public static final String CLAIM_REHABILITATION_LIC_REQUIRED = "CLAIM_REHABILITATION_LIC_REQUIRED";
+
+    /**
+     * Fencing License has to be attached
+     */
+    public static final String CLAIM_FENCING_LIC_REQUIRED = "CLAIM_FENCING_LIC_REQUIRED";
+
+    /**
+     * Construction License (Province) has to be attached
+     */
+    public static final String CLAIM_CONSTRUCT_PROV_LIC_REQUIRED = "CLAIM_CONSTRUCT_PROV_LIC_REQUIRED";
+
+    /**
+     * Selling License has to be attached
+     */
+    public static final String CLAIM_SELLING_LIC_REQUIRED = "CLAIM_SELLING_LIC_REQUIRED";
+
+    /**
+     * Lease Document has to be attached
+     */
+    public static final String CLAIM_LEASE_DOCUMENT_REQUIRED = "CLAIM_LEASE_DOCUMENT_REQUIRED";
+
     /**
      * Challenge expiry date is required
      */
@@ -247,6 +316,36 @@ public class ErrorKeys {
      * Name is required
      */
     public static final String CLAIM_NAME_REQUIRED = "CLAIM_NAME_REQUIRED";
+    /**
+     * Gender is required
+     */
+    public static final String CLAIM_CLAIMANT_GENDER_REQUIERD = "CLAIM_CLAIMANT_GENDER_REQUIERD";
+
+    /**
+     * Last name is required
+     */
+    public static final String CLAIM_LAST_NAME_REQUIRED = "CLAIM_LAST_NAME_REQUIRED";
+    /**
+     * Date of birth is required
+     */
+    public static final String CLAIM_BIRTHDAY_REQUIRED = "CLAIM_BIRTHDAY_REQUIRED";
+    /**
+     * Residence is required
+     */
+    public static final String CLAIM_RESIDENCE_REQUIRED = "CLAIM_RESIDENCE_REQUIRED";
+    /**
+     * Address is required
+     */
+    public static final String CLAIM_ADDRESS_REQUIRED = "CLAIM_ADDRESS_REQUIRED";
+    /**
+     * Father name is required
+     */
+    public static final String CLAIM_FATHER_NAME_REQUIRED = "CLAIM_FATHER_NAME_REQUIRED";
+    /**
+     * Mother name is required
+     */
+    public static final String CLAIM_MOTHER_NAME_REQUIRED = "CLAIM_MOTHER_NAME_REQUIRED";
+
     /**
      * Owner type is required
      */
@@ -491,7 +590,7 @@ public class ErrorKeys {
      * Add at least one lender
      */
     public static final String MORTGAGE_LENDERS = "MORTGAGE_LENDERS";
-    
+
     /**
      * Claim was already added to the list
      */
@@ -501,17 +600,24 @@ public class ErrorKeys {
      */
     public static final String CLAIM_MUST_BE_MODERATED = "CLAIM_MUST_BE_MODERATED";
     /**
-     * Selected claim has registered restrictions. They must be terminated first.
+     * Selected claim has registered restrictions. They must be terminated
+     * first.
      */
     public static final String CLAIM_HAS_RESTRICTIONS = "CLAIM_HAS_RESTRICTIONS";
     /**
      * Transaction has been already completed.
      */
     public static final String TRANSACTION_HAS_BEEN_COMPLETED = "TRANSACTION_HAS_BEEN_COMPLETED";
-    
-    /** For claims merge transaction, there must be at least 2 claims to merge and 1 new claim as a result of merge. */
+
+    /**
+     * For claims merge transaction, there must be at least 2 claims to merge
+     * and 1 new claim as a result of merge.
+     */
     public static final String CLAIMS_MERGE_COUNT = "CLAIMS_MERGE_COUNT";
-    
-    /** For claims split, there must be 1 claim to split and at least 2 new claims as a result of split. */
+
+    /**
+     * For claims split, there must be 1 claim to split and at least 2 new
+     * claims as a result of split.
+     */
     public static final String CLAIM_SPLIT_COUNT = "CLAIM_SPLIT_COUNT";
 }

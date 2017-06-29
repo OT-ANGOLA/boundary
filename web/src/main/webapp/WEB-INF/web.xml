@@ -8,6 +8,7 @@
         <param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
         <param-value>true</param-value>
     </context-param>
+    
     <servlet>
         <servlet-name>captcha</servlet-name>
         <servlet-class>org.sola.opentenure.services.boundary.beans.helpers.CaptchaImage</servlet-class>
@@ -49,7 +50,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index.xhtml</welcome-file>
+        <welcome-file>login.xhtml</welcome-file>
     </welcome-file-list>
     <error-page>
         <error-code>500</error-code>

@@ -1,14 +1,19 @@
 package org.sola.opentenure.services.boundary.beans.claim;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.Part;
+import org.apache.ibatis.migration.commands.StatusCommand;
 import org.apache.sanselan.util.IOUtils;
+import org.sola.common.ClaimStatusConstants;
 import org.sola.common.DateUtility;
 import org.sola.common.FileUtility;
 import org.sola.common.StringUtility;
@@ -27,6 +32,8 @@ import org.sola.services.common.LocalInfo;
 import org.sola.services.common.logging.LogUtility;
 import org.sola.cs.services.ejb.refdata.entities.SourceType;
 import org.sola.cs.services.ejb.system.businesslogic.SystemCSEJBLocal;
+import org.sola.cs.services.ejbs.claim.entities.WorkflowRequiredDocument;
+import org.sola.cs.services.ejbs.claim.entities.WorkflowStep;
 
 /**
  * Provides method to manage claim attachments
@@ -59,24 +66,18 @@ public class ClaimAttachmentBean extends AbstractBackingBean {
     private Attachment attach;
     private Part docFile;
     private boolean isNew = true;
-    private List<SourceType> docTypesForIssuance = null;
+    private ArrayList<SourceType> allowedDocTypes = null;
 
     @PostConstruct
     private void init() {
-        if (docTypesForIssuance == null) {
-            docTypesForIssuance = claimEjb.getDocumentTypesForIssuance(langBean.getLocale());
-        }
+
     }
 
     public SourceType[] getDocumentTypes() {
         SourceType[] docType;
-        if (!claimPageBean.getIsTransfer() && !claimPageBean.getIsRestriction() && claimPageBean.getCanIssueCertificate()) {
-            // Retrurn only allowed documents
-            docType = refData.getDocumentTypesForCcoIssuance(isNew, langBean.getLocale());
-        } else {
-            docType = refData.getDocumentTypes(isNew, langBean.getLocale(), true);
-        }
-        return docType;
+        ArrayList<SourceType> result = (ArrayList<SourceType>) getAllowedDocTypes().clone();
+        result.add(0, refData.createDummy(new SourceType()));
+        return result.toArray(new SourceType[result.size()]);
     }
 
     public Attachment getAttach() {
@@ -127,16 +128,56 @@ public class ClaimAttachmentBean extends AbstractBackingBean {
         }
     }
 
-        public boolean getCanEdit(String typeCode) {
-        if (claimPageBean.getCanIssueCertificate()) {
-            // Check doc type which can be edited
-            for (SourceType docType : docTypesForIssuance) {
-                if (docType.getCode().equalsIgnoreCase(typeCode)) {
-                    return true;
+    // Prepare document types, allowed for the claim, based on its status and size
+    public ArrayList<SourceType> getAllowedDocTypes() {
+        if (allowedDocTypes == null) {
+            allowedDocTypes = new ArrayList<>();
+            List<SourceType> allDocs = refData.getDocumentTypes(langBean.getLocale(), true);
+
+            if (StringUtility.isEmpty(claimPageBean.getClaim().getStatusCode())
+                    || claimPageBean.getIsTransfer() || claimPageBean.getIsRestriction()
+                    || claimPageBean.getClaim().getStatusCode().equalsIgnoreCase(ClaimStatusConstants.CREATED)
+                    || claimPageBean.getClaim().getStatusCode().equalsIgnoreCase(ClaimStatusConstants.UNMODERATED)
+                    || claimPageBean.getClaim().getStatusCode().equalsIgnoreCase(ClaimStatusConstants.REVIEWED)) {
+                // Allow all doc types for created, unmoderated and reviewed claims
+                allowedDocTypes = (ArrayList<SourceType>) allDocs;
+            } else if (claimPageBean.getWorkflowSteps() != null) {
+                // Get doc types based on workflow steps
+                for (WorkflowStep step : claimPageBean.getWorkflowSteps()) {
+                    if (step.getClaimStatusCode().equals(ClaimStatusConstants.MODERATED)) {
+                        // Check size
+                        if (claimPageBean.getClaim().getClaimArea() != null) {
+                            if ((step.isBiggerThanSize() && claimPageBean.getClaim().getClaimArea() > step.getParcelSize())
+                                    || (!step.isBiggerThanSize() && claimPageBean.getClaim().getClaimArea() <= step.getParcelSize())) {
+                                // Get allowed doc types
+                                if (step.getRequiredDocumentTypes() != null && step.getRequiredDocumentTypes().size() > 0) {
+                                    for (WorkflowRequiredDocument reqDocType : step.getRequiredDocumentTypes()) {
+                                        SourceType docType = refData.getBeanByCode(allDocs, reqDocType.getDocTypeCode());
+                                        if (docType != null) {
+                                            allowedDocTypes.add(0, docType);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+        return allowedDocTypes;
+    }
 
+    public boolean getCanEdit(String typeCode) {
+        if(!claimPageBean.getCanAddDocuments()){
+            return false;
+        }
+        
+        // Check doc type which can be edited
+        for (SourceType docType : getAllowedDocTypes()) {
+            if (docType.getCode().equalsIgnoreCase(typeCode)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -176,13 +217,14 @@ public class ClaimAttachmentBean extends AbstractBackingBean {
                             AttachmentBinary atth = claimEjb.saveAttachment(arg[0]);
                             claimPageBean.getClaim().getAttachments().add(atth);
                             if (instantSave) {
+                                claimPageBean.resetWorkflowStep();
                                 claimEjb.addClaimAttachment(claimPageBean.getClaim().getId(), attach.getId());
                             }
                         }
                     });
                 } else {
                     Attachment attachmentToSave = null;
-                    
+
                     for (Attachment attachment : claimPageBean.getClaim().getAttachments()) {
                         if (attachment.getId().equalsIgnoreCase(attach.getId()) && (attachment.getEntityAction() == null || !attachment.getEntityAction().equals(EntityAction.DELETE))) {
                             MappingManager.getMapper().map(attach, attachment);
@@ -190,8 +232,8 @@ public class ClaimAttachmentBean extends AbstractBackingBean {
                             break;
                         }
                     }
-                    
-                    if (claimPageBean.getCanPrintCertificate() && attachmentToSave != null) {
+
+                    if (attachmentToSave != null) {
                         claimEjb.saveClaimAttachment(attachmentToSave, langBean.getLocale());
                     }
                 }

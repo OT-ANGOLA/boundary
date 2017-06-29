@@ -56,7 +56,7 @@ public class LoginBean implements Serializable {
             if(activeUserBean.getCanModerateClaim() || activeUserBean.getCanRecordClaim() || activeUserBean.getCanReviewClaim()){
                 context.getExternalContext().redirect(request.getContextPath() + "/Dashboard.xhtml");
             } else {
-                context.getExternalContext().redirect(request.getContextPath() + "/index.xhtml");
+                context.getExternalContext().redirect(request.getContextPath() + "/login.xhtml");
             }
         } catch (ServletException e) {
             context.addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.LOGIN_FAILED)));

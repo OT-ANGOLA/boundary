@@ -8,20 +8,63 @@
         <ui:composition>
             <script language="javascript">
                 function checkPartyForm() {
-                    var nameError = '- #{err.CLAIM_CLAIMANT_NAME_REQUIRED}';
+                    var nameError = '- #{err.CLAIM_CLAIM_NAME_REQUIRED}';
+                    var lastNameError = '- #{err.CLAIM_LAST_NAME_REQUIRED}';
                     var genderError = '- #{err.CLAIM_CLAIMANT_GENDER_REQUIERD}';
+                    var birthdayError = '- #{err.CLAIM_BIRTHDAY_REQUIRED}';
+                    var residenceError = '- #{err.CLAIM_RESIDENCE_REQUIRED}';
+                    var fatherNameError = '- #{err.CLAIM_FATHER_NAME_REQUIRED}';
+                    var motherNameError = '- #{err.CLAIM_MOTHER_NAME_REQUIRED}';
+                    var addressError = '- #{err.CLAIM_ADDRESS_REQUIRED}';
+                    
                     var errors = "";
 
                     if ($("#mainForm\\:txtPartyName").val() === '') {
                         errors = nameError + "\r\n";
                     }
-
-                    if (document.getElementById("mainForm:cbxGender") !== null) {
-                        if($("#mainForm\\:cbxGender").val() === ''){
-                            errors += genderError;
+                    
+                    if (document.getElementById("mainForm:txtPartyLastName") !== null) {
+                        if ($("#mainForm\\:txtPartyLastName").val() === '') {
+                            errors += lastNameError + "\r\n";
                         }
                     }
 
+                    if (document.getElementById("mainForm:cbxGender") !== null) {
+                        if ($("#mainForm\\:cbxGender").val() === '') {
+                            errors += genderError + "\r\n";
+                        }
+                    }
+
+                    if (document.getElementById("mainForm:txtPartyBirthDate") !== null) {
+                        if ($("#mainForm\\:txtPartyBirthDate").val() === '') {
+                            errors += birthdayError + "\r\n";
+                        }
+                    }
+                    
+                    if (document.getElementById("mainForm:hfResidenceCommune") !== null) {
+                        if ($("#mainForm\\:hfResidenceCommune").val() === '') {
+                            errors += residenceError + "\r\n";
+                        }
+                    }
+                    
+                    if (document.getElementById("mainForm:txtFatherName") !== null) {
+                        if ($("#mainForm\\:txtFatherName").val() === '') {
+                            errors += fatherNameError + "\r\n";
+                        }
+                    }
+                    
+                    if (document.getElementById("mainForm:txtMotherName") !== null) {
+                        if ($("#mainForm\\:txtMotherName").val() === '') {
+                            errors += motherNameError + "\r\n";
+                        }
+                    }
+                    
+                    if (document.getElementById("mainForm:txtPartyAddress") !== null) {
+                        if ($("#mainForm\\:txtPartyAddress").val() === '') {
+                            errors += addressError + "\r\n";
+                        }
+                    }
+                    
                     if (errors !== '') {
                         alert(errors);
                         return false;
@@ -29,11 +72,11 @@
                     return true;
                 }
             </script>
-            
+
             <div id="pnlPartyWrapper" class="HiddenItem">
                 <h:panelGroup id="pnlParty" layout="block">
                     <div class="row">
-                        <div class="#{claimPageBean.party.person ? 'col-md-4' : 'col-md-8'}">
+                        <div class="#{claimPageBean.party.person ? 'col-md-3' : 'col-md-6'}">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_NAME} <i class="glyphicon glyphicon-required"></i>
                             </label>
@@ -43,9 +86,36 @@
                                          maxlength="250"
                                          autocomplete="off" />
                         </div>
-                        <h:panelGroup class="col-md-4" layout="block" rendered="#{claimPageBean.party.person}">
+                        <h:panelGroup class="col-md-6" layout="block" rendered="#{not claimPageBean.party.person}">
+                            <h:outputLabel>
+                                #{msg.CLAIM_PAGE_ESTABLISHMENT_DATE}
+                            </h:outputLabel>
+
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </span>
+                                <h:inputText id="txtPartyEstablishmentDate" 
+                                             value="#{claimPageBean.partyBirthday}"  
+                                             class="form-control DateField"
+                                             maxlength="10"
+                                             autocomplete="off" />
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup class="col-md-3" layout="block" rendered="#{claimPageBean.party.person}">
                             <h:outputLabel rendered="#{claimPageBean.party.person}">
-                                #{msg.CLAIM_PAGE_CLAIMANT_LAST_NAME}
+                                #{msg.CLAIM_PAGE_CLAIMANT_OTHER_NAME}
+                            </h:outputLabel>
+                            <h:inputText id="txtPartyOtherName" 
+                                         value="#{claimPageBean.party.otherName}"  
+                                         rendered="#{claimPageBean.party.person}"
+                                         class="form-control"
+                                         maxlength="250"
+                                         autocomplete="off" />
+                        </h:panelGroup>
+                        <h:panelGroup class="col-md-3" layout="block" rendered="#{claimPageBean.party.person}">
+                            <h:outputLabel rendered="#{claimPageBean.party.person}">
+                                #{msg.CLAIM_PAGE_CLAIMANT_LAST_NAME} <i class="glyphicon glyphicon-required"></i>
                             </h:outputLabel>
                             <h:inputText id="txtPartyLastName" 
                                          value="#{claimPageBean.party.lastName}"  
@@ -54,58 +124,7 @@
                                          maxlength="250"
                                          autocomplete="off" />
                         </h:panelGroup>
-                        <div class="col-md-4">
-                            <h:outputLabel rendered="#{claimPageBean.party.person}">
-                                #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY}
-                            </h:outputLabel>
-                            <h:outputLabel rendered="#{not claimPageBean.party.person}">
-                                #{msg.CLAIM_PAGE_ESTABLISHMENT_DATE}
-                            </h:outputLabel>
-
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="glyphicon glyphicon-calendar"></i>
-                                </span>
-                                <h:inputText id="txtPartyBirthDate" 
-                                             value="#{claimPageBean.partyBirthday}"  
-                                             class="form-control DateField"
-                                             maxlength="10"
-                                             autocomplete="off" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="splitter"></div>
-
-                    <div class="row">
-                        <h:panelGroup class="col-md-4" layout="block" rendered="#{claimPageBean.party.person}">
-                            <label>
-                                #{msg.CLAIM_PAGE_CLAIMANT_ID_TYPE}
-                            </label>
-                            <h:selectOneListbox
-                                id="cbxIdTypes" 
-                                size="1"
-                                value="#{claimPageBean.party.idTypeCode}"
-                                class="form-control">
-                                <f:selectItems value="#{claimPageBean.idTypes}" var="t"
-                                               itemLabel="#{t.displayValue}" 
-                                               itemValue="#{t.code}" />
-                            </h:selectOneListbox>
-                        </h:panelGroup>
-                        <div class="#{claimPageBean.party.person ? 'col-md-4' : 'col-md-8'}">
-                            <h:outputLabel id="lblClaimantIdNumber" rendered="#{claimPageBean.party.person}">
-                                #{msg.CLAIM_PAGE_CLAIMANT_ID_NUMBER}
-                            </h:outputLabel>
-                            <h:outputLabel id="lblClaimantRegNumber" rendered="#{not claimPageBean.party.person}">
-                                #{msg.CLAIM_PAGE_REGISTRATION_NUMBER}
-                            </h:outputLabel>
-                            <h:inputText id="txtPartyIdNumber" 
-                                         value="#{claimPageBean.party.idNumber}"  
-                                         class="form-control"
-                                         maxlength="20"
-                                         autocomplete="off" />
-                        </div>
-                        <div class="col-md-4">
+                        <h:panelGroup class="col-md-3" layout="block" rendered="#{claimPageBean.party.person}">
                             <h:outputLabel id="lblClaimantGender" rendered="#{claimPageBean.party.person}">
                                 #{msg.CLAIM_PAGE_CLAIMANT_GENDER} <i class="glyphicon glyphicon-required"></i>
                             </h:outputLabel>
@@ -119,13 +138,128 @@
                                                itemLabel="#{t.displayValue}" 
                                                itemValue="#{t.code}" />
                             </h:selectOneListbox>
-                        </div>
+                        </h:panelGroup>
                     </div>
 
                     <div class="splitter"></div>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <h:panelGroup class="col-md-3" layout="block" rendered="#{claimPageBean.party.person}">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_ID_TYPE}
+                            </label>
+                            <h:selectOneListbox
+                                id="cbxIdTypes" 
+                                size="1"
+                                value="#{claimPageBean.party.idTypeCode}"
+                                class="form-control">
+                                <f:selectItems value="#{claimPageBean.idTypes}" var="t"
+                                               itemLabel="#{t.displayValue}" 
+                                               itemValue="#{t.code}" />
+                            </h:selectOneListbox>
+                        </h:panelGroup>
+                        <div class="col-md-3">
+                            <h:outputLabel id="lblClaimantIdNumber" rendered="#{claimPageBean.party.person}">
+                                #{msg.CLAIM_PAGE_CLAIMANT_ID_NUMBER}
+                            </h:outputLabel>
+                            <h:outputLabel id="lblClaimantRegNumber" rendered="#{not claimPageBean.party.person}">
+                                #{msg.CLAIM_PAGE_REGISTRATION_NUMBER}
+                            </h:outputLabel>
+                            <h:inputText id="txtPartyIdNumber" 
+                                         value="#{claimPageBean.party.idNumber}"  
+                                         class="form-control"
+                                         maxlength="20"
+                                         autocomplete="off" />
+                        </div>
+                        <div class="col-md-3">
+                            <h:outputLabel>
+                                #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_DATE}
+                            </h:outputLabel>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </span>
+                                <h:inputText id="txtPartyIdIssueDate" 
+                                             value="#{claimPageBean.partyIdIssueDate}"  
+                                             class="form-control DateField"
+                                             maxlength="10"
+                                             autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="#{claimPageBean.party.person ? 'col-md-3' : 'col-md-6'}">
+                            <h:outputLabel>
+                                #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_PLACE}
+                            </h:outputLabel>
+                            <br />
+                            <a href="#" onclick="return selectIdIssueLocation();">
+                                <h:outputText id="lblIdIssueLocation" value="#{claimPageBean.partyIdIssuanceLocation}" />
+                            </a>
+                            <h:inputHidden id="hfIdIssueCountry" value="#{claimPageBean.party.idIssuanceCountryCode}" />
+                            <h:inputHidden id="hfIdIssueProvince" value="#{claimPageBean.party.idIssuanceProvinceCode}" />
+                        </div>
+                    </div>
+
+                    <ui:fragment rendered="#{claimPageBean.party.person}">
+                        <div class="splitter"></div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h:outputLabel>
+                                    #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY} <i class="glyphicon glyphicon-required"></i>
+                                </h:outputLabel>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </span>
+                                    <h:inputText id="txtPartyBirthDate" 
+                                                 value="#{claimPageBean.partyBirthday}"  
+                                                 class="form-control DateField"
+                                                 maxlength="10"
+                                                 autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <h:outputLabel>
+                                    #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY_PLACE}
+                                </h:outputLabel>
+                                <br />
+                                <a href="#" onclick="return selectBirthdayLocation();">
+                                    <h:outputText id="lblBirthdayLocation" value="#{claimPageBean.partyBirthdayLocation}" />
+                                </a>
+                                <h:inputHidden id="hfBirthdayCountry" value="#{claimPageBean.party.birthCountryCode}" />
+                                <h:inputHidden id="hfBirthdayCommune" value="#{claimPageBean.party.birthCommuneCode}" />
+                            </div>
+                            <div class="col-md-3">
+                                <h:outputLabel>
+                                    #{msg.CLAIM_PAGE_CLAIMANT_CIVIL_STATUS}
+                                </h:outputLabel>
+                                <h:selectOneListbox
+                                    id="cbxMaritalStatus" 
+                                    size="1"
+                                    value="#{claimPageBean.party.maritalStatusCode}"
+                                    class="form-control">
+                                    <f:selectItems value="#{claimPageBean.maritalStatuses}" var="m"
+                                                   itemLabel="#{m.displayValue}" 
+                                                   itemValue="#{m.code}" />
+                                </h:selectOneListbox>
+                            </div>
+                            <div class="col-md-3">
+                                <h:outputLabel>
+                                    #{msg.CLAIM_PAGE_CLAIMANT_RESIDENCE} <i class="glyphicon glyphicon-required"></i>
+                                </h:outputLabel>
+                                <br />
+                                <a href="#" onclick="return selectRecidenceLocation();">
+                                    <h:outputText id="lblResidenceLocation" value="#{claimPageBean.partyResidenceLocation}" />
+                                </a>
+                                <h:inputHidden id="hfResidenceCommune" value="#{claimPageBean.party.residenceCommuneCode}" />
+                            </div>
+                        </div>
+                    </ui:fragment>
+
+                    <div class="splitter"></div>
+
+                    <div class="row">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_PHONE_NUMBER}
                             </label>
@@ -135,7 +269,7 @@
                                          maxlength="20"
                                          autocomplete="off" />
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_MOBILE_PHONE_NUMBER}
                             </label>
@@ -145,7 +279,17 @@
                                          maxlength="20"
                                          autocomplete="off" />
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label>
+                                #{msg.CLAIM_PAGE_CLAIMANT_ADDRESS} <i class="glyphicon glyphicon-required"></i>
+                            </label>
+                            <h:inputText id="txtPartyAddress" 
+                                         value="#{claimPageBean.party.address}"  
+                                         class="form-control"
+                                         maxlength="255"
+                                         autocomplete="off" />
+                        </div>
+                        <div class="col-md-3">
                             <label>
                                 #{msg.CLAIM_PAGE_CLAIMANT_EMAIL}
                             </label>
@@ -157,23 +301,61 @@
                         </div>
                     </div>
 
-                    <div class="splitter"></div>
+                    <ui:fragment rendered="#{claimPageBean.party.person}">
+                        <div class="splitter"></div>
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label>
-                                #{msg.CLAIM_PAGE_CLAIMANT_ADDRESS}
-                            </label>
-                            <h:inputText id="txtPartyAddress" 
-                                         value="#{claimPageBean.party.address}"  
-                                         class="form-control"
-                                         maxlength="255"
-                                         autocomplete="off" />
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>
+                                    #{msg.CLAIM_PAGE_CLAIMANT_FATHER_NAME} <i class="glyphicon glyphicon-required"></i>
+                                </label>
+                                <h:inputText id="txtFatherName" 
+                                             value="#{claimPageBean.party.fatherName}"  
+                                             class="form-control"
+                                             maxlength="150"
+                                             autocomplete="off" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>
+                                    #{msg.CLAIM_PAGE_CLAIMANT_MOTHER_NAME} <i class="glyphicon glyphicon-required"></i>
+                                </label>
+                                <h:inputText id="txtMotherName" 
+                                             value="#{claimPageBean.party.motherName}"  
+                                             class="form-control"
+                                             maxlength="150"
+                                             autocomplete="off" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>
+                                    #{msg.CLAIM_PAGE_CLAIMANT_BENEFICIARY_NAME} 
+                                </label>
+                                <h:inputText id="txtBeneficiaryName" 
+                                             value="#{claimPageBean.party.beneficiaryName}"  
+                                             class="form-control"
+                                             maxlength="150"
+                                             autocomplete="off" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>
+                                    #{msg.CLAIM_PAGE_CLAIMANT_BENEFICIARY_ID_NUMBER}
+                                </label>
+                                <h:inputText id="txtBeneficiaryIdNumber" 
+                                             value="#{claimPageBean.party.beneficiaryIdNumber}"  
+                                             class="form-control"
+                                             maxlength="20"
+                                             autocomplete="off" />
+                            </div>
                         </div>
-                    </div>
+                    </ui:fragment>
+
                     <h:inputHidden id="hPartyId" />
                 </h:panelGroup>
             </div>
+            <script src="#{request.contextPath}/js/ot_party.js"></script>
+            <script type="text/javascript">
+                ERROR_CLAIM_SELECT_COMMUNE = "#{err.CLAIM_SELECT_COMMUNE}";
+                ERROR_CLAIM_SELECT_COUNTRY = "#{err.CLAIM_SELECT_COUNTRY}";
+            </script>
         </ui:composition>
     </body>
 </html>

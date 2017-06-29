@@ -58,7 +58,7 @@
                                     </a>
                                 </td>
                             </tr>
-                            
+
                             <tr id="lenders#{m.id}" style="display: none;border-bottom: 4px solid #87a968;padding-top: 3px;">
                                 <td colspan="6" style="border-top: none;">
                                     <h:panelGroup id="divParties" layout="block">
@@ -67,27 +67,12 @@
                                             <h:panelGroup rendered="#{o.person}" layout="block">
                                                 <div class="OwnerHeader">
                                                     <div class="OwnerHeaderCaption2">
-                                                        #{o.name} #{o.lastName}
+                                                        #{o.name} #{o.otherName} #{o.lastName} (#{claimPageBean.getGenderName(o.genderCode)})
                                                     </div>
                                                     <div class="clearfix"></div>
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-md-3">
-                                                        <label>
-                                                            #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY}
-                                                        </label>
-                                                        <br />
-                                                        #{dateBean.getShortDate(o.birthDate)}
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <label>
-                                                            #{msg.CLAIM_PAGE_CLAIMANT_GENDER}
-                                                        </label>
-                                                        <br />
-                                                        #{claimPageBean.getGenderName(o.genderCode)} 
-                                                    </div>
-
                                                     <div class="col-md-3">
                                                         <label>
                                                             #{msg.CLAIM_PAGE_CLAIMANT_ID_TYPE}
@@ -102,6 +87,53 @@
                                                         <br />
                                                         #{o.idNumber}
                                                     </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_DATE}
+                                                        </label>
+                                                        <br />
+                                                        #{dateBean.getShortDate(o.idIssuanceDate)}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_PLACE}
+                                                        </label>
+                                                        <br />
+                                                        #{claimPageBean.getIdIssuanceLocation(o, false)}
+                                                    </div>
+                                                </div>
+
+                                                <div class="splitter"></div>
+
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY}
+                                                        </label>
+                                                        <br />
+                                                        #{dateBean.getShortDate(o.birthDate)}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_BIRTHDAY_PLACE}
+                                                        </label>
+                                                        <br />
+                                                        #{claimPageBean.getBirthdayLocation(o, false)}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_CIVIL_STATUS}
+                                                        </label>
+                                                        <br />
+                                                        #{claimPageBean.getMaritalStatusName(o.maritalStatusCode)}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_RESIDENCE}
+                                                        </label>
+                                                        <br />
+                                                        #{claimPageBean.getResidenceLocation(o, false)}
+                                                    </div>
                                                 </div>
 
                                                 <div class="splitter"></div>
@@ -112,14 +144,24 @@
                                                             #{msg.CLAIM_PAGE_CLAIMANT_PHONE_NUMBER}
                                                         </label>
                                                         <br />
-                                                        #{o.phone}
+                                                        <h:panelGroup rendered="#{claimPageBean.canViewFullInfo}">
+                                                            #{o.phone} 
+                                                        </h:panelGroup>
+                                                        <h:panelGroup rendered="#{not claimPageBean.canViewFullInfo}">
+                                                            <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
+                                                        </h:panelGroup>
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label>
                                                             #{msg.CLAIM_PAGE_CLAIMANT_MOBILE_PHONE_NUMBER}
                                                         </label>
                                                         <br />
-                                                        #{o.mobilePhone}
+                                                        <h:panelGroup rendered="#{claimPageBean.canViewFullInfo}">
+                                                            #{o.mobilePhone}
+                                                        </h:panelGroup>
+                                                        <h:panelGroup rendered="#{not claimPageBean.canViewFullInfo}">
+                                                            <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
+                                                        </h:panelGroup>
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label>
@@ -133,7 +175,45 @@
                                                             #{msg.CLAIM_PAGE_CLAIMANT_EMAIL}
                                                         </label>
                                                         <br />
-                                                        #{o.email}
+                                                        <h:panelGroup rendered="#{claimPageBean.canViewFullInfo}">
+                                                            #{o.email}
+                                                        </h:panelGroup>
+                                                        <h:panelGroup rendered="#{not claimPageBean.canViewFullInfo}">
+                                                            <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
+                                                        </h:panelGroup>
+                                                    </div>
+                                                </div>
+
+                                                <div class="splitter"></div>
+
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_FATHER_NAME}
+                                                        </label>
+                                                        <br />
+                                                        #{o.fatherName}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_MOTHER_NAME}
+                                                        </label>
+                                                        <br />
+                                                        #{o.motherName}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_BENEFICIARY_NAME}
+                                                        </label>
+                                                        <br />
+                                                        #{o.beneficiaryName}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_BENEFICIARY_ID_NUMBER}
+                                                        </label>
+                                                        <br />
+                                                        #{o.beneficiaryIdNumber}
                                                     </div>
                                                 </div>
 
@@ -142,7 +222,7 @@
                                             <h:panelGroup rendered="#{not o.person}" layout="block">
                                                 <div class="OwnerHeader">
                                                     <div class="OwnerHeaderCaption2">
-                                                        #{o.name} #{o.lastName}
+                                                        #{o.name}
                                                     </div>
                                                     <div class="clearfix"></div>
                                                 </div>
@@ -154,14 +234,6 @@
                                                         <br />
                                                         #{dateBean.getShortDate(o.birthDate)}
                                                     </div>
-
-                                                    <div class="col-md-3">
-                                                        <label>
-                                                            #{msg.CLAIM_PAGE_CLAIMANT_ID_TYPE}
-                                                        </label>
-                                                        <br />
-                                                        #{claimPageBean.getIdTypeName(o.idTypeCode)} 
-                                                    </div>
                                                     <div class="col-md-3">
                                                         <label>
                                                             #{msg.CLAIM_PAGE_REGISTRATION_NUMBER}
@@ -170,7 +242,18 @@
                                                         #{o.idNumber}
                                                     </div>
                                                     <div class="col-md-3">
-
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_DATE}
+                                                        </label>
+                                                        <br />
+                                                        #{dateBean.getShortDate(o.idIssuanceDate)}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>
+                                                            #{msg.CLAIM_PAGE_CLAIMANT_ID_ISSUE_PLACE}
+                                                        </label>
+                                                        <br />
+                                                        #{claimPageBean.getIdIssuanceLocation(o, false)}
                                                     </div>
                                                 </div>
 
@@ -182,14 +265,24 @@
                                                             #{msg.CLAIM_PAGE_CLAIMANT_PHONE_NUMBER}
                                                         </label>
                                                         <br />
-                                                        #{o.phone}
+                                                        <h:panelGroup rendered="#{claimPageBean.canViewFullInfo}">
+                                                            #{o.phone} 
+                                                        </h:panelGroup>
+                                                        <h:panelGroup rendered="#{not claimPageBean.canViewFullInfo}">
+                                                            <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
+                                                        </h:panelGroup>
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label>
                                                             #{msg.CLAIM_PAGE_CLAIMANT_MOBILE_PHONE_NUMBER}
                                                         </label>
                                                         <br />
-                                                        #{o.mobilePhone}
+                                                        <h:panelGroup rendered="#{claimPageBean.canViewFullInfo}">
+                                                            #{o.mobilePhone}
+                                                        </h:panelGroup>
+                                                        <h:panelGroup rendered="#{not claimPageBean.canViewFullInfo}">
+                                                            <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
+                                                        </h:panelGroup>
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label>
@@ -203,7 +296,12 @@
                                                             #{msg.CLAIM_PAGE_CLAIMANT_EMAIL}
                                                         </label>
                                                         <br />
-                                                        #{o.email}
+                                                        <h:panelGroup rendered="#{claimPageBean.canViewFullInfo}">
+                                                            #{o.email}
+                                                        </h:panelGroup>
+                                                        <h:panelGroup rendered="#{not claimPageBean.canViewFullInfo}">
+                                                            <i>#{msg.CLAIM_PAGE_HIDDEN}</i>
+                                                        </h:panelGroup>
                                                     </div>
                                                 </div>
 
@@ -218,15 +316,15 @@
                 </table>
 
                 <script language="javascript">
-                    function showHideLaenders(rowId){
-                        if($("#" + rowId).is(":visible")){
+                    function showHideLaenders(rowId) {
+                        if ($("#" + rowId).is(":visible")) {
                             $("#" + rowId).hide();
                         } else {
                             $("#" + rowId).show();
                         }
                         return false;
                     }
-                    
+
                     function onTerminateMortgage(data) {
                         handleAjax(data);
                         var status = data.status;
