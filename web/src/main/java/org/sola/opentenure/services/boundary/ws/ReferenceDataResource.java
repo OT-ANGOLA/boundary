@@ -15,6 +15,7 @@ import org.sola.opentenure.services.boundary.beans.responses.ResponseFactory;
 import org.sola.cs.services.ejbs.claim.entities.ClaimStatus;
 import org.sola.cs.services.ejbs.claim.businesslogic.ClaimEJBLocal;
 import org.sola.cs.services.boundary.transferobjects.configuration.CrsTO;
+import org.sola.cs.services.boundary.transferobjects.referencedata.AdjacencyTypeTO;
 import org.sola.cs.services.boundary.transferobjects.referencedata.ClaimStatusTO;
 import org.sola.cs.services.boundary.transferobjects.referencedata.CommuneTO;
 import org.sola.cs.services.boundary.transferobjects.referencedata.CountryTO;
@@ -543,6 +544,22 @@ public class ReferenceDataResource extends AbstractWebRestService {
     public String getLandProjects(@PathParam(value = LOCALE_CODE) String localeCode){
         try {
             return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getLandProjects(localeCode, true), LandProjectTO.class));
+        } catch (Exception e) {
+            throw processException(e, localeCode);
+        }
+    }
+    
+    /**
+     * Returns List of {@link AdjacencyTypeTO} objects
+     * @param localeCode Locale code used to return localized values
+     * @return
+     */
+    @GET
+    @Produces("application/json; charset=UTF-8")
+    @Path(value = "{a:getadjacencytypes|getAdjacencyTypes}")
+    public String getAdjacencyTypes(@PathParam(value = LOCALE_CODE) String localeCode){
+        try {
+            return getMapper().writeValueAsString(CsGenericTranslator.toTOList(refData.getAdjacencyTypes(localeCode, true), AdjacencyTypeTO.class));
         } catch (Exception e) {
             throw processException(e, localeCode);
         }
