@@ -588,8 +588,16 @@ public class ClaimPageBean extends AbstractBackingBean {
     }
 
     public String getIdIssuanceLocation(ClaimParty p, boolean showSelect) {
-        if (p != null && (!StringUtility.isEmpty(p.getIdIssuanceCountryCode()) || !StringUtility.isEmpty(p.getIdIssuanceProvinceCode()))) {
-            if (!StringUtility.isEmpty(p.getIdIssuanceProvinceCode())) {
+        if (p != null && (!StringUtility.isEmpty(p.getIdIssuanceCountryCode()) 
+                || !StringUtility.isEmpty(p.getIdIssuanceProvinceCode())
+                || !StringUtility.isEmpty(p.getIdIssuanceMunicipalityCode())
+                || !StringUtility.isEmpty(p.getIdIssuanceCommuneCode()))) {
+            
+            if(!StringUtility.isEmpty(p.getIdIssuanceCommuneCode())){
+                return refData.getLocationStringByCommune(p.getIdIssuanceCommuneCode(), langBean.getLocale());
+            } else if(!StringUtility.isEmpty(p.getIdIssuanceMunicipalityCode())){
+                return refData.getLocationStringByMunicipality(p.getIdIssuanceMunicipalityCode(), langBean.getLocale());
+            } else if (!StringUtility.isEmpty(p.getIdIssuanceProvinceCode())) {
                 return refData.getLocationStringByProvince(p.getIdIssuanceProvinceCode(), langBean.getLocale());
             } else if (!StringUtility.isEmpty(p.getIdIssuanceCountryCode())) {
                 return refData.getCountryName(p.getIdIssuanceCountryCode(), langBean.getLocale());
@@ -1515,82 +1523,6 @@ public class ClaimPageBean extends AbstractBackingBean {
             getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CLAIMANT_REQUIRED)));
         } else if (!validateParty(claim.getClaimant(), false)) {
             isValid = false;
-        }
-
-        // Validate documents
-        boolean validLicenseForExtension = !licenseForExtension;
-        boolean validLicenseForConstruction = !licenseForConstruction;
-        boolean validLeaseDocument = !leaseDocument;
-        boolean validLicenseForConstructionProvince = !licenseForConstructionProvince;
-        boolean validLicenseForDemolish = !licenseForDemolish;
-        boolean validLicenseForRefurbish = !licenseForRefurbish;
-        boolean validLicenseForFence = true; //!licenseForFence;
-        boolean validLicenseForSell = true; //!licenseForSell;
-
-        if (claim.getAttachments() != null) {
-            for (Attachment attach : claim.getAttachments()) {
-                if (attach.getEntityAction() == null || (attach.getEntityAction() != EntityAction.DELETE && attach.getEntityAction() != EntityAction.DISASSOCIATE)) {
-                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LEASE_DOCUMENT)) {
-                        validLeaseDocument = true;
-                    }
-                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_CONSTRUCTION)) {
-                        validLicenseForConstruction = true;
-                    }
-                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_CONSTRUCTION_BY_PROVINCE)) {
-                        validLicenseForConstructionProvince = true;
-                    }
-                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_DEMOLISH)) {
-                        validLicenseForDemolish = true;
-                    }
-                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_REHABILITATION)) {
-                        validLicenseForRefurbish = true;
-                    }
-                    if (StringUtility.empty(attach.getTypeCode()).equalsIgnoreCase(SourceType.CODE_LIC_EXTENTION)) {
-                        validLicenseForExtension = true;
-                    }
-                }
-            }
-        }
-
-        // licenseForExtension
-        if (!validLicenseForExtension) {
-            isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_EXTENSION_LIC_REQUIRED)));
-        }
-        // licenseForConstruction
-        if (!validLicenseForConstruction) {
-            isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CONSTRUCT_LIC_REQUIRED)));
-        }
-        // leaseDocument
-        if (!validLeaseDocument) {
-            isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_LEASE_DOCUMENT_REQUIRED)));
-        }
-        // licenseForConstructionProvince
-        if (!validLicenseForConstructionProvince) {
-            isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_CONSTRUCT_PROV_LIC_REQUIRED)));
-        }
-        // licenseForDemolish
-        if (!validLicenseForDemolish) {
-            isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_DEMOLISH_LIC_REQUIRED)));
-        }
-        // licenseForRefurbish
-        if (!validLicenseForRefurbish) {
-            isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_REHABILITATION_LIC_REQUIRED)));
-        }
-        // licenseForFence
-        if (!validLicenseForFence) {
-            isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_FENCING_LIC_REQUIRED)));
-        }
-        // licenseForSell
-        if (!validLicenseForSell) {
-            isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_SELLING_LIC_REQUIRED)));
         }
 
         // Challenge expiry date

@@ -22,6 +22,8 @@ public class ClaimPartyTO extends AbstractReadWriteTO {
     private Date idIssuanceDate;
     private String idIssuanceCountryCode;
     private String idIssuanceProvinceCode;
+    private String idIssuanceMunicipalityCode;
+    private String idIssuanceCommuneCode;
     private String birthCountryCode;
     private String birthCommuneCode;
     private String residenceCommuneCode;
@@ -175,6 +177,22 @@ public class ClaimPartyTO extends AbstractReadWriteTO {
 
     public void setIdIssuanceProvinceCode(String idIssuanceProvinceCode) {
         this.idIssuanceProvinceCode = idIssuanceProvinceCode;
+    }
+
+    public String getIdIssuanceMunicipalityCode() {
+        return idIssuanceMunicipalityCode;
+    }
+
+    public void setIdIssuanceMunicipalityCode(String idIssuanceMunicipalityCode) {
+        this.idIssuanceMunicipalityCode = idIssuanceMunicipalityCode;
+    }
+
+    public String getIdIssuanceCommuneCode() {
+        return idIssuanceCommuneCode;
+    }
+
+    public void setIdIssuanceCommuneCode(String idIssuanceCommuneCode) {
+        this.idIssuanceCommuneCode = idIssuanceCommuneCode;
     }
 
     public String getBirthCountryCode() {

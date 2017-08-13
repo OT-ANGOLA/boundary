@@ -2,9 +2,9 @@ var ERROR_CLAIM_SELECT_COMMUNE = "";
 var ERROR_CLAIM_SELECT_COUNTRY = "";
 
 function saveBirthdayLocation() {
-    var province  = $("#cbxProvinces").val();
+    var province = $("#cbxProvinces").val();
     var commune = $("#cbxCommunes").val();
-    
+
     if ((province === null || province !== '') && (commune === null || commune === '')) {
         alert(ERROR_CLAIM_SELECT_COMMUNE);
         return false;
@@ -20,7 +20,7 @@ function selectBirthdayLocation() {
     selectLocation($("#mainForm\\:hfBirthdayCountry").val(), null, null, $("#mainForm\\:hfBirthdayCommune").val(), 0, saveBirthdayLocation);
 }
 
-function saveRecidenceLocation(){
+function saveRecidenceLocation() {
     var commune = $("#cbxCommunes").val();
     if (commune === null || commune === '') {
         alert(ERROR_CLAIM_SELECT_COMMUNE);
@@ -31,14 +31,16 @@ function saveRecidenceLocation(){
     return true;
 }
 
-function selectRecidenceLocation(){
+function selectRecidenceLocation() {
     selectLocation(null, null, null, $("#mainForm\\:hfResidenceCommune").val(), 0, saveRecidenceLocation);
 }
 
-function saveIdIssuanceLocation(){
-    var province  = $("#cbxProvinces").val();
+function saveIdIssuanceLocation() {
+    var province = $("#cbxProvinces").val();
     var country = $("#cbxCountries").val();
-    
+    var municipality = $("#cbxMunicipalities").val();
+    var commune = $("#cbxCommunes").val();
+
     if ((country === null || country === '') && (province === null || province === '')) {
         alert(ERROR_CLAIM_SELECT_COUNTRY);
         return false;
@@ -46,10 +48,16 @@ function saveIdIssuanceLocation(){
 
     $("#mainForm\\:hfIdIssueCountry").val(country);
     $("#mainForm\\:hfIdIssueProvince").val(province);
+    $("#mainForm\\:hfIdIssueMunicipality").val(municipality);
+    $("#mainForm\\:hfIdIssueCommune").val(commune);
     $("#mainForm\\:lblIdIssueLocation").text(getAddressString());
     return true;
 }
 
-function selectIdIssueLocation(){
-    selectLocation($("#mainForm\\:hfIdIssueCountry").val(), $("#mainForm\\:hfIdIssueProvince").val(), null, null, 2, saveIdIssuanceLocation);
+function selectIdIssueLocation() {
+    selectLocation($("#mainForm\\:hfIdIssueCountry").val(),
+            $("#mainForm\\:hfIdIssueProvince").val(),
+            $("#mainForm\\:hfIdIssueMunicipality").val(),
+            $("#mainForm\\:hfIdIssueCommune").val(),
+            0, saveIdIssuanceLocation);
 }

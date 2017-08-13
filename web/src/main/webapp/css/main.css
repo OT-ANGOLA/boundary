@@ -12,7 +12,7 @@ body{
 
 #PageHeader, #PageHeaderCaption, #PageHeaderLogo, #PageHeaderLogin {
     height: 76px;
-    background-color: #217c95;
+    background-color: #EF2900;
     font-family: Arial, sans-serif;
     line-height: 60px;
     color: #fff;
@@ -236,7 +236,7 @@ ul{
         TABLES
 -----------------------------------*/
 .table-header{
-    background-color:#87a968;
+    background-color: #EF2900;
     height:38px;
     color:#fff;
     vertical-align: top !important;
@@ -304,7 +304,7 @@ img .olTileImage{max-width:none;}
     border-right: 4px solid #eee !important;
 }
 .selectedMenuItem{
-    border-bottom: #87a968 solid 4px;
+    border-bottom: #000 solid 4px;
 }
 
 .selectedMenuLink{

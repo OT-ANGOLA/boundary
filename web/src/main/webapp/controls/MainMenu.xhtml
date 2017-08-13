@@ -6,7 +6,7 @@
     <body>
         <ui:composition>
             <nav class="navbar navbar-default" role="navigation">
-                <div class="collapse navbar-collapse" id="main-navbar">
+                <div class="collapse navbar-collapse" id="main-navbar" style="background-color: #FFFF01;">
                     <ul class="nav navbar-nav">
                         <c:if test="#{activeUserBean.authenticated and (activeUserBean.canRecordClaim or activeUserBean.canModerateClaim or activeUserBean.canReviewClaim)}">
                             <li class='#{mainMenuBean.getItemClassByPath("/Dashboard.xhtml")}'>

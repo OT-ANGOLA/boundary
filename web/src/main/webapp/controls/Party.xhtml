@@ -8,7 +8,7 @@
         <ui:composition>
             <script language="javascript">
                 function checkPartyForm() {
-                    var nameError = '- #{err.CLAIM_CLAIM_NAME_REQUIRED}';
+                    var nameError = '- #{err.CLAIM_NAME_REQUIRED}';
                     var lastNameError = '- #{err.CLAIM_LAST_NAME_REQUIRED}';
                     var genderError = '- #{err.CLAIM_CLAIMANT_GENDER_REQUIERD}';
                     var birthdayError = '- #{err.CLAIM_BIRTHDAY_REQUIRED}';
@@ -196,6 +196,8 @@
                             </a>
                             <h:inputHidden id="hfIdIssueCountry" value="#{claimPageBean.party.idIssuanceCountryCode}" />
                             <h:inputHidden id="hfIdIssueProvince" value="#{claimPageBean.party.idIssuanceProvinceCode}" />
+                            <h:inputHidden id="hfIdIssueMunicipality" value="#{claimPageBean.party.idIssuanceMunicipalityCode}" />
+                            <h:inputHidden id="hfIdIssueCommune" value="#{claimPageBean.party.idIssuanceCommuneCode}" />
                         </div>
                     </div>
 

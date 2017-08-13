@@ -39,12 +39,12 @@
                 <div class="content">
                     <div class="nav-tab-div">
                         <ul class="nav nav-tabs">
-                            <li class="active"><a href="#general" data-toggle="tab">#{msg.CLAIM_PAGE_CLAIM}</a></li>
-                            <li><a href="#claimant" data-toggle="tab">#{msg.CLAIM_PAGE_CLAIMANT}</a></li>
-                            <li><a href="#mapTab" data-toggle="tab" onclick="renderMap()">#{msg.CLAIM_PAGE_MAP}</a></li>
-                            <li><a href="#attachments" data-toggle="tab">#{msg.CLAIM_PAGE_DOCUMENTS}</a></li>
+                            <li class="active"><a href="#claimant" data-toggle="tab">#{msg.CLAIM_PAGE_CLAIMANT}</a></li>
                             <li><a href="#owners" data-toggle="tab">#{msg.CLAIM_PAGE_OWNERS}</a></li>
+                            <li><a href="#general" data-toggle="tab">#{msg.CLAIM_PAGE_LAND}</a></li>
+                            <li><a href="#mapTab" data-toggle="tab" onclick="renderMap()">#{msg.CLAIM_PAGE_MAP}</a></li>
                             <li><a href="#additional" data-toggle="tab">#{msg.CLAIM_PAGE_ADJACENCIES}</a></li>
+                            <li><a href="#attachments" data-toggle="tab">#{msg.CLAIM_PAGE_DOCUMENTS}</a></li>
                             <li><a href="#comments" data-toggle="tab">#{msg.CLAIM_PAGE_COMMENTS}</a></li>
                             <ui:include src="/controls/DynaFormHeaders.xhtml"></ui:include>
                         </ul>
@@ -53,7 +53,7 @@
 
                     <!-- Tab panes -->
                     <div class="tab-content">
-                        <div class="tab-pane active" id="general">
+                        <div class="tab-pane" id="general">
                             <div style="padding: 15px 0px;width:700px;">
                                 <div class="row">
                                     <div class="col-md-4">
@@ -267,7 +267,7 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane" id="claimant">
+                        <div class="tab-pane active" id="claimant">
                             <div style="padding: 15px 0px;width:700px;">
                                 <ui:include src="/controls/Claimant.xhtml">
                                     <ui:param name="allowEdit" value="true" rendererType="java.lang.Boolean"></ui:param>

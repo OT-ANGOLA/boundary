@@ -1,19 +1,5 @@
 package org.sola.opentenure.services.boundary.ws;
 
-//import javax.ws.rs.ApplicationPath;
-//import org.glassfish.jersey.media.multipart.MultiPartFeature;
-//import org.glassfish.jersey.server.ResourceConfig;
-//
-//@ApplicationPath("ws")
-//public class ApplicationConfig extends ResourceConfig {
-//
-//    public ApplicationConfig() {
-//        super(ClaimResource.class, 
-//                LoginResource.class, 
-//                ReferenceDataResource.class, 
-//                MultiPartFeature.class);
-//    }
-//}
 import java.util.Set;
 import javax.ws.rs.core.Application;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
