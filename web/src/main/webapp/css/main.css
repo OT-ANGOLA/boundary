@@ -131,14 +131,14 @@ body{
 }
 
 .ShareHeaderCaption{
-    width:300px;
+    width:200px;
     float:left; 
     font-size:20px;
     padding-left:7px;
 }
 
 .ShareHeaderControls{
-    width:400px;
+    width:550px;
     float:right;
     text-align:right;
     line-height:30px;

@@ -6,7 +6,8 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:uc="http://xmlns.jcp.org/jsf/composite/uc"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
     <h:body>
         <ui:composition template="../templates/MapTemplate.xhtml">
             <ui:define name="title">
@@ -59,10 +60,24 @@
                                     <div class="col-md-4">
                                         <label>
                                             #{msg.CLAIM_PAGE_NUMBER}
-                                            <i class="glyphicon glyphicon-required"></i>
                                         </label>
                                         <h:inputText id="txtClaimNumber" 
                                                      value="#{claimPageBean.claim.nr}"  
+                                                     class="form-control"
+                                                     disabled="#{not empty claimPageBean.claim.nr and not claimPageBean.claim.isNew()}"
+                                                     onkeypress="return restrictInputForNumbers(event);" ondrop="return false;" onpaste="return false;"
+                                                     p:placeholder="#{msg.CLAIM_PAGE_AUTO_NUMBER}"
+                                                     title="#{msg.CLAIM_PAGE_AUTO_NUMBER}"
+                                                     maxlength="20" 
+                                                     autocomplete="off" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            #{msg.CLAIM_PAGE_PLOT_NUMBER}
+                                            <i class="glyphicon glyphicon-required"></i>
+                                        </label>
+                                        <h:inputText id="txtPlotNumber" 
+                                                     value="#{claimPageBean.claim.plotNumber}"  
                                                      class="form-control"
                                                      maxlength="20"
                                                      autocomplete="off" />
@@ -76,13 +91,6 @@
                                                      class="form-control"
                                                      maxlength="20"
                                                      autocomplete="off" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>
-                                            #{msg.MAP_CONTROL_AREA}
-                                        </label>
-                                        <br />
-                                        <h:outputLabel value="#{claimPageBean.claim.claimArea}" /> m<sup>2</sup>
                                     </div>
                                 </div>
 
@@ -248,7 +256,11 @@
                                         #{claimPageBean.statusName}
                                     </div>
                                     <div class="col-md-4">
-
+                                        <label>
+                                            #{msg.MAP_CONTROL_AREA}
+                                        </label>
+                                        <br />
+                                        <h:outputLabel value="#{claimPageBean.claim.claimArea}" /> m<sup>2</sup>
                                     </div>
                                 </div>
 

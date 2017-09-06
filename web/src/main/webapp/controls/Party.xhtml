@@ -16,13 +16,13 @@
                     var fatherNameError = '- #{err.CLAIM_FATHER_NAME_REQUIRED}';
                     var motherNameError = '- #{err.CLAIM_MOTHER_NAME_REQUIRED}';
                     var addressError = '- #{err.CLAIM_ADDRESS_REQUIRED}';
-                    
+                    var emailFormatError = '- #{err.CLAIM_CLAIMANT_INVALID_EMAIL}';
                     var errors = "";
 
                     if ($("#mainForm\\:txtPartyName").val() === '') {
                         errors = nameError + "\r\n";
                     }
-                    
+
                     if (document.getElementById("mainForm:txtPartyLastName") !== null) {
                         if ($("#mainForm\\:txtPartyLastName").val() === '') {
                             errors += lastNameError + "\r\n";
@@ -40,31 +40,39 @@
                             errors += birthdayError + "\r\n";
                         }
                     }
-                    
+
                     if (document.getElementById("mainForm:hfResidenceCommune") !== null) {
                         if ($("#mainForm\\:hfResidenceCommune").val() === '') {
                             errors += residenceError + "\r\n";
                         }
                     }
-                    
+
                     if (document.getElementById("mainForm:txtFatherName") !== null) {
                         if ($("#mainForm\\:txtFatherName").val() === '') {
                             errors += fatherNameError + "\r\n";
                         }
                     }
-                    
+
                     if (document.getElementById("mainForm:txtMotherName") !== null) {
                         if ($("#mainForm\\:txtMotherName").val() === '') {
                             errors += motherNameError + "\r\n";
                         }
                     }
-                    
+
                     if (document.getElementById("mainForm:txtPartyAddress") !== null) {
                         if ($("#mainForm\\:txtPartyAddress").val() === '') {
                             errors += addressError + "\r\n";
                         }
                     }
-                    
+
+                    if (document.getElementById("mainForm:txtPartyEmail") !== null) {
+                        if ($("#mainForm\\:txtPartyEmail").val() !== '') {
+                            if (!validateEmail($("#mainForm\\:txtPartyEmail").val())) {
+                                errors += emailFormatError + "\r\n";
+                            }
+                        }
+                    }
+
                     if (errors !== '') {
                         alert(errors);
                         return false;
@@ -268,7 +276,8 @@
                             <h:inputText id="txtPartyPhone" 
                                          value="#{claimPageBean.party.phone}"  
                                          class="form-control"
-                                         maxlength="20"
+                                         maxlength="9"
+                                         onkeypress="return restrictInputForNumbers(event);" ondrop="return false;" onpaste="return false;"
                                          autocomplete="off" />
                         </div>
                         <div class="col-md-3">
@@ -278,7 +287,8 @@
                             <h:inputText id="txtPartyMobilePhone" 
                                          value="#{claimPageBean.party.mobilePhone}"  
                                          class="form-control"
-                                         maxlength="20"
+                                         maxlength="9"
+                                         onkeypress="return restrictInputForNumbers(event);" ondrop="return false;" onpaste="return false;"
                                          autocomplete="off" />
                         </div>
                         <div class="col-md-3">
@@ -355,8 +365,8 @@
             </div>
             <script src="#{request.contextPath}/js/ot_party.js"></script>
             <script type="text/javascript">
-                ERROR_CLAIM_SELECT_COMMUNE = "#{err.CLAIM_SELECT_COMMUNE}";
-                ERROR_CLAIM_SELECT_COUNTRY = "#{err.CLAIM_SELECT_COUNTRY}";
+                                             ERROR_CLAIM_SELECT_COMMUNE = "#{err.CLAIM_SELECT_COMMUNE}";
+                                             ERROR_CLAIM_SELECT_COUNTRY = "#{err.CLAIM_SELECT_COUNTRY}";
             </script>
         </ui:composition>
     </body>

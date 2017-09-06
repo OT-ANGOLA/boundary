@@ -155,17 +155,17 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label>
+                                            #{msg.CLAIM_PAGE_PLOT_NUMBER}
+                                        </label>
+                                        <br />
+                                        #{claimPageBean.claim.plotNumber}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
                                             #{msg.CLAIM_PAGE_BLOCK}
                                         </label>
                                         <br />
                                         #{claimPageBean.claim.blockNumber}
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>
-                                            #{msg.MAP_CONTROL_AREA}
-                                        </label>
-                                        <br />
-                                        <h:outputLabel value="#{claimPageBean.claim.claimArea}" /> m<sup>2</sup>
                                     </div>
                                 </div>
 
@@ -290,7 +290,11 @@
                                         <h:outputText value="#{claimPageBean.statusName}" escape="false" />
                                     </div>
                                     <div class="col-md-4">
-                                        &nbsp;
+                                        <label>
+                                            #{msg.MAP_CONTROL_AREA}
+                                        </label>
+                                        <br />
+                                        <h:outputLabel value="#{claimPageBean.claim.claimArea}" /> m<sup>2</sup>
                                     </div>
                                 </div>
 

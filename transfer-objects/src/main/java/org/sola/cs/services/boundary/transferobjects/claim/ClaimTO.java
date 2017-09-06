@@ -46,6 +46,7 @@ public class ClaimTO extends AbstractReadWriteTO {
     private String neighborhood;
     private String landProjectCode;
     private String communeCode;
+    private String plotNumber;
     
     public ClaimTO(){
         super();
@@ -369,5 +370,13 @@ public class ClaimTO extends AbstractReadWriteTO {
 
     public void setCommuneCode(String communeCode) {
         this.communeCode = communeCode;
+    }
+
+    public String getPlotNumber() {
+        return plotNumber;
+    }
+
+    public void setPlotNumber(String plotNumber) {
+        this.plotNumber = plotNumber;
     }
 }

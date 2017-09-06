@@ -32,15 +32,15 @@
                         </td>
                         <td class="table-cell">
                             <h:outputLabel for="txtDescription">
-                                #{msg.CLAIM_SEARCH_DESCRIPTION}
+                                #{msg.CLAIM_PAGE_PLOT_NUMBER}
                             </h:outputLabel>
-                            <h:inputText id="txtDescription" 
-                                         value="#{claimSearchComponentBean.searchParams.description}" 
+                            <h:inputText id="txtPlotNumber" 
+                                         value="#{claimSearchComponentBean.searchParams.plotNumber}" 
                                          class="form-control"
-                                         maxlength="200"
+                                         maxlength="20"
                                          autocomplete="off" />
                         </td>
-                        <td class="table-cell" style="width: 180px;">
+                        <td class="table-cell" style="width: 200px;">
                             <h:outputLabel for="txtDateFrom">
                                 #{msg.CLAIM_SEARCH_LODGING_DATE_FROM}
                             </h:outputLabel>
@@ -55,7 +55,7 @@
                                              autocomplete="off" />
                             </div>
                         </td>
-                        <td class="table-cell" style="width: 180px;">
+                        <td class="table-cell" style="width: 200px;">
                             <h:outputLabel for="txtDateTo">
                                 #{msg.CLAIM_SEARCH_LODGING_DATE_TO}
                             </h:outputLabel>

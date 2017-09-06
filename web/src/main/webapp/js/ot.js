@@ -84,3 +84,21 @@ function parseDate(date) {
     }
     return timestamp;
 }
+
+function restrictInputForNumbers(e) {
+    var pattern = /[0-9]/g;
+    return restrictInput(e, pattern);
+}
+
+function restrictInput(e, pattern) {
+    var keyCode = e.keyCode === 0 ? e.charCode : e.keyCode;
+    return (String.fromCharCode(keyCode).match(pattern) ||
+            ((e.keyCode === 8 || e.keyCode === 9 || e.keyCode === 46 ||
+                    e.keyCode === 36 || e.keyCode === 35 || e.keyCode === 37 ||
+                    e.keyCode === 39) && e.charCode !== e.keyCode));
+}
+
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}

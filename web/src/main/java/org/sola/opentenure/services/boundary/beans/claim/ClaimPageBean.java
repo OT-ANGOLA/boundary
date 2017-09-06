@@ -1477,9 +1477,13 @@ public class ClaimPageBean extends AbstractBackingBean {
         boolean fullValidation = true; //!getIsSubmitted();
 
         // NR/Identificator
-        if (StringUtility.isEmpty(claim.getNr())) {
+//        if (StringUtility.isEmpty(claim.getNr())) {
+//            isValid = false;
+//            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_IDENTIFICATOR_REQUIRED)));
+//        }
+        if (StringUtility.isEmpty(claim.getPlotNumber())) {
             isValid = false;
-            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_IDENTIFICATOR_REQUIRED)));
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_PLOT_NUMBER_REQUIRED)));
         }
         // Type
         if (fullValidation && StringUtility.isEmpty(claim.getTypeCode())) {

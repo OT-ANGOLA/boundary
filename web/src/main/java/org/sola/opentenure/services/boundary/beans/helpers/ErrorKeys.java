@@ -620,4 +620,9 @@ public class ErrorKeys {
      * claims as a result of split.
      */
     public static final String CLAIM_SPLIT_COUNT = "CLAIM_SPLIT_COUNT";
+    
+    /**
+     * Plot number is required
+     */
+    public static final String CLAIM_PLOT_NUMBER_REQUIRED = "CLAIM_PLOT_NUMBER_REQUIRED";
 }
