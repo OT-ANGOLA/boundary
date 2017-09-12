@@ -274,7 +274,8 @@ public class ReferenceDataResource extends AbstractWebRestService {
             List<FormTemplateTO> formTemplates = CsGenericTranslator.toTOList(claimEJB.getFormTemplates(localeCode), FormTemplateTO.class);
 
             if (formTemplates == null) {
-                throw ExceptionFactory.buildNotFound(localeCode);
+                return "{}";
+                //throw ExceptionFactory.buildNotFound(localeCode);
             }
             return getMapper().writeValueAsString(formTemplates);
         } catch (Exception e) {
