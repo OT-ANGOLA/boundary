@@ -339,7 +339,7 @@ public class ClaimResource extends AbstractWebRestService {
                 @Override
                 public void run() {
                     claims[0] = claimEjb.saveClaim(claims[0], localeCode);
-                    //claimEjb.submitClaim(claims[0].getId(), localeCode);
+                    claimEjb.submitClaim(claims[0].getId(), localeCode);
                 }
             });
 

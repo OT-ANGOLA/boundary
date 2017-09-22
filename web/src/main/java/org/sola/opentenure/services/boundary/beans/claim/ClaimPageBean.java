@@ -1474,7 +1474,7 @@ public class ClaimPageBean extends AbstractBackingBean {
 
     private boolean validateClaim() throws Exception {
         boolean isValid = true;
-        boolean fullValidation = true; //!getIsSubmitted();
+        boolean fullValidation = !getIsSubmitted();
 
         // NR/Identificator
 //        if (StringUtility.isEmpty(claim.getNr())) {
@@ -1501,22 +1501,22 @@ public class ClaimPageBean extends AbstractBackingBean {
             getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_COMMUNE_REQUIRED)));
         }
         // North adjacency 
-        if (StringUtility.isEmpty(claim.getNorthAdjacency()) || StringUtility.isEmpty(claim.getNorthAdjacencyTypeCode())) {
+        if (fullValidation && (StringUtility.isEmpty(claim.getNorthAdjacency()) || StringUtility.isEmpty(claim.getNorthAdjacencyTypeCode()))) {
             isValid = false;
             getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_NORTH_ADJ_REQUIRED)));
         }
         // South adjacency 
-        if (StringUtility.isEmpty(claim.getSouthAdjacency()) || StringUtility.isEmpty(claim.getSouthAdjacencyTypeCode())) {
+        if (fullValidation && (StringUtility.isEmpty(claim.getSouthAdjacency()) || StringUtility.isEmpty(claim.getSouthAdjacencyTypeCode()))) {
             isValid = false;
             getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_SOUTH_ADJ_REQUIRED)));
         }
         // East adjacency 
-        if (StringUtility.isEmpty(claim.getEastAdjacency()) || StringUtility.isEmpty(claim.getEastAdjacencyTypeCode())) {
+        if (fullValidation && (StringUtility.isEmpty(claim.getEastAdjacency()) || StringUtility.isEmpty(claim.getEastAdjacencyTypeCode()))) {
             isValid = false;
             getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_EAST_ADJ_REQUIRED)));
         }
         // West adjacency 
-        if (StringUtility.isEmpty(claim.getWestAdjacency()) || StringUtility.isEmpty(claim.getWestAdjacencyTypeCode())) {
+        if (fullValidation && (StringUtility.isEmpty(claim.getWestAdjacency()) || StringUtility.isEmpty(claim.getWestAdjacencyTypeCode()))) {
             isValid = false;
             getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_WEST_ADJ_REQUIRED)));
         }
