@@ -241,6 +241,10 @@ public class ErrorKeys {
     public static final String CLAIM_WEST_ADJ_REQUIRED = "CLAIM_WEST_ADJ_REQUIRED";
 
     /**
+     * Finalidade is required
+     */
+    public static final String CLAIM_FINALIDADE_REQUIRED = "CLAIM_FINALIDADE_REQUIRED";
+    /**
      * Extension License has to be attached
      */
     public static final String CLAIM_EXTENSION_LIC_REQUIRED = "CLAIM_EXTENSION_LIC_REQUIRED";
@@ -620,7 +624,7 @@ public class ErrorKeys {
      * claims as a result of split.
      */
     public static final String CLAIM_SPLIT_COUNT = "CLAIM_SPLIT_COUNT";
-    
+
     /**
      * Plot number is required
      */

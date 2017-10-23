@@ -172,6 +172,7 @@
                                     <div class="col-md-4">
                                         <label>
                                             #{msg.CLAIM_PAGE_FINALIDADE}
+                                            <i class="glyphicon glyphicon-required"></i>
                                         </label>
                                         <h:inputText id="txtDesciption" 
                                                      value="#{claimPageBean.claim.description}"  
@@ -208,7 +209,15 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-
+                                        <label>
+                                            #{msg.CLAIM_PAGE_AREA_GROSS}
+                                        </label>
+                                        <br />
+                                        <h:inputText id="txtAreaGross" 
+                                                     value="#{claimPageBean.claim.areaGross}"  
+                                                     class="form-control"
+                                                     maxlength="25"
+                                                     autocomplete="off" />
                                     </div>
                                 </div>
 

@@ -1500,6 +1500,11 @@ public class ClaimPageBean extends AbstractBackingBean {
             isValid = false;
             getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_COMMUNE_REQUIRED)));
         }
+        // Finalidade
+        if(StringUtility.isEmpty(claim.getDescription())){
+            isValid = false;
+            getContext().addMessage(null, new FacesMessage(msgProvider.getErrorMessage(ErrorKeys.CLAIM_FINALIDADE_REQUIRED)));
+        }
         // North adjacency 
         if (fullValidation && (StringUtility.isEmpty(claim.getNorthAdjacency()) || StringUtility.isEmpty(claim.getNorthAdjacencyTypeCode()))) {
             isValid = false;
